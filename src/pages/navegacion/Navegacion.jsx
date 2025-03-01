@@ -13,10 +13,19 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
 import HomeIcon from '@mui/icons-material/Home';
-import { NavLink, Route, Routes } from "react-router";
-import Principal from '../principal/Principal';
-
-const pages = ['Inicio', 'Pricing', 'Blog'];
+import { NavLink, useNavigate } from 'react-router';
+import "./navegacion.css";
+/*
+pages = [
+  ['nombre de la opcion', 'ruta']
+]  
+*/
+const pages = [
+  ['Inicio', 'index'], 
+  ['Prueba', 'prueba'], 
+  ['Cursos', 'cursos'],
+  ['Subir Cursos', 'subir-curso']
+];
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
 function ResponsiveAppBar() {
@@ -38,8 +47,11 @@ function ResponsiveAppBar() {
     setAnchorElUser(null);
   };
 
+  const navigate = useNavigate();
+
   return (
-    <AppBar position="static">
+    
+    <AppBar position="static" className='navbar'>              
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           <HomeIcon fontSize="small" sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
@@ -60,11 +72,7 @@ function ResponsiveAppBar() {
           >
             LOGO
           </Typography>
-          <Routes>
-          <Route path="/" element={<Principal />}>
-    
-          </Route>
-          </Routes>
+
 
           <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
             <IconButton
@@ -94,8 +102,12 @@ function ResponsiveAppBar() {
               sx={{ display: { xs: 'block', md: 'none' } }}
             >
               {pages.map((page) => (
+                /* {user.rol = "RECLUTADOR" && <Componente/>} */
                 <MenuItem key={page} onClick={handleCloseNavMenu}>
-                  <Typography sx={{ textAlign: 'center' }}>{page}</Typography>
+                  <NavLink to="/" end>
+                    <Typography sx={{ textAlign: 'center' }}>{page[0]}</Typography>
+                  </NavLink>
+                  
                 </MenuItem>
               ))}
             </Menu>
@@ -121,12 +133,14 @@ function ResponsiveAppBar() {
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
             {pages.map((page) => (
+              //useNavigate para cambiar las rutas
               <Button
                 key={page}
-                onClick={handleCloseNavMenu}
+                onClick={() => {navigate(`/${page[1]}`)}}
                 sx={{ my: 2, color: 'white', display: 'block' }}
+                
               >
-                {page}
+                {page[0]}
               </Button>
             ))}
           </Box>
