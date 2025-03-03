@@ -13,18 +13,23 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
 import HomeIcon from '@mui/icons-material/Home';
-import { NavLink, useNavigate } from 'react-router';
+import { NavLink, useNavigate } from 'react-router'; 
 import "./navegacion.css";
+import { red } from '@mui/material/colors';
+import '../dialogo/login/Login';
 /*
 pages = [
   ['nombre de la opcion', 'ruta']
 ]  
 */
+const handleClickOpen = () => {
+  setOpen(true);
+};
+
 const pages = [
-  ['Inicio', 'index'], 
-  ['Prueba', 'prueba'], 
-  ['Cursos', 'cursos'],
-  ['Subir Cursos', 'subir-curso']
+  ['Explorar', 'explorar'], 
+  ['Comunidad', 'comunidad'], 
+  ['Novedades', 'novedades']
 ];
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
@@ -51,7 +56,7 @@ function ResponsiveAppBar() {
 
   return (
     
-    <AppBar position="static" className='navbar'>              
+    <AppBar position="static" sx={{backgroundColor:'#152e57'}}>              
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           <HomeIcon fontSize="small" sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
@@ -145,11 +150,12 @@ function ResponsiveAppBar() {
             ))}
           </Box>
           <Box sx={{ flexGrow: 0 }}>
-            <Tooltip title="Open settings">
+           {/*  <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                 <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
               </IconButton>
-            </Tooltip>
+            </Tooltip> */}
+            <Button variant="outlined" sx={{color:'white',borderColor:'white'}} >iniciar sesion</Button>
             <Menu
               sx={{ mt: '45px' }}
               id="menu-appbar"

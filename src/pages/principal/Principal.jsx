@@ -1,19 +1,24 @@
 import * as React from 'react';
 import Navegacion from '../navegacion/Navegacion';
 import { Route, Routes } from 'react-router';
-import Prueba from '../prueba/Prueba';
-import Cursos from '../cursos/Cursos'
+import Comunidad from '../comunidad/Comunidad';
+import Novedades from '../novedades/Novedades';
+import Explorar from '../explorar/Explorar';
+
 
 const saludo =()=>{
   return(
+    
   <div>
+   
     <Navegacion></Navegacion>
     {/* //Definiendo las rutas */}
     <Routes>
-      <Route path="/prueba" element={<Prueba />}></Route>
-      <Route path="/cursos" element={<Cursos />}></Route>
+      <Route path="/Explorar" element={<Explorar />}></Route>
+      <Route path="/Comunidad" element={<Comunidad />}></Route>
+      <Route path="/Novedades" element={<Novedades />}></Route>
     </Routes>
-    <h1>hola</h1>
+   
   </div>
   
 )  
