@@ -12,7 +12,7 @@ import AdbIcon from '@mui/icons-material/Adb';
 import HomeIcon from '@mui/icons-material/Home';
 import Button from '@mui/material/Button';
 import { NavLink, useNavigate } from 'react-router';
-import Login from '../dialogo/login/Login'; // Cambia el nombre a Login
+import Login from '../dialogo/login/Login'; 
 
 const pages = [
   ['Explorar', 'explorar'], 
@@ -23,7 +23,7 @@ const pages = [
 function ResponsiveAppBar() {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
-  const [openLoginDialog, setOpenLoginDialog] = React.useState(false); // Estado para el diálogo
+  const [openLoginDialog, setOpenLoginDialog] = React.useState(false); 
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -34,11 +34,11 @@ function ResponsiveAppBar() {
   };
 
   const handleOpenLoginDialog = () => {
-    setOpenLoginDialog(true); // Abrir diálogo de inicio de sesión
+    setOpenLoginDialog(true); 
   };
 
   const handleCloseLoginDialog = () => {
-    setOpenLoginDialog(false); // Cerrar diálogo
+    setOpenLoginDialog(false); 
   };
 
   const navigate = useNavigate();
@@ -143,8 +143,6 @@ function ResponsiveAppBar() {
           </Toolbar>
         </Container>
       </AppBar>
-
-      {/* Usar el componente Login */}
       <Login open={openLoginDialog} onClose={handleCloseLoginDialog} />
     </React.Fragment>
   );
