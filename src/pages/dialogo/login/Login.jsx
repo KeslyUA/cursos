@@ -10,7 +10,7 @@ import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import { colors } from '@mui/material';
-
+import { login } from '../../../utils/auth';
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
@@ -50,14 +50,27 @@ export default function Login({ open, onClose }) {
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose} sx={{color:'#dd5b5b'}}>Cancelar</Button>
-        <Button onClick={Ingresar}>Ingresar</Button>
+        <Button id='ingresar' onClick={Ingresar}>Ingresar</Button>
       </DialogActions>
     </Dialog>
   );
 }
+async function Ingresar(){
+ const usuario = document.getElementById("usuario").value;
+  const contraseña = document.getElementById("contraseña").value;
 
-function Ingresar () {
-  usuario=document.getElementById('usuario');
-  contraseña= document.getElementById('contraseña');
+  if (!usuario || !contraseña) {
+    alert("Por favor, completa todos los campos.");
+    return;
+  }
 
+  const result = await login(usuario, contraseña);
+
+  if (result.success) {
+    alert("Inicio de sesión exitoso");
+    // Aquí podrías redirigir al usuario a otra página
+    window.location.href = "/Explorar"; // Ajusta según tu ruta
+  } else {
+    alert(result.message);
+  }
 }

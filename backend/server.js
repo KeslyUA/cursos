@@ -1,42 +1,46 @@
 require("dotenv").config();
 const express = require("express");
-const mysql = require("mysql2");
 const cors = require("cors");
+const { PrismaClient } = require("@prisma/client");
 
 const app = express();
+const prisma = new PrismaClient();
+
 app.use(cors());
-app.use(express.json()); 
+app.use(express.json());
 
-
-const db = mysql.createConnection({
-    host: process.env.DB_HOST || "localhost",
-    user: process.env.DB_USER || "root",
-    password: process.env.DB_PASSWORD || "",
-    database: process.env.DB_NAME || "capacitacion",
-    port: process.env.DB_PORT || 3306
-});
-
-db.connect((err) => {
-  if (err) {
-    console.error("Error de conexión:", err);
-  } else {
-    console.log("Conectado a MySQL");
+// Obtener usuarios
+app.get("/usuarios", async (req, res) => {
+  try {
+    const usuarios = await prisma.usuarios.findMany();
+    res.json(usuarios);
+  } catch (error) {
+    res.status(500).json({ error: "Error al obtener usuarios" });
   }
 });
 
 
-app.get("/usuarios", (req, res) => {
-    db.query("SELECT * FROM usuarios", (err, results) => {
-      if (err) {
-        console.error("Error en la consulta SQL:", err);
-        return res.status(500).json({ error: "Error en la base de datos" });
+// Iniciar sesión
+app.post("/login", async (req, res) => {
+    console.log("solicitud recibida",req.body);
+    const { usuario, contraseña } = req.body;
+  
+    try {
+      const user = await prisma.usuarios.findUnique({
+        where: { usuario },
+      }); console.log("Usuario encontrado en BD:", user);
+      if (!user || user.contraseña !== contraseña) {
+        return res.status(401).json({ error: "Usuario o contraseña incorrectos" }); 
       }
-      res.json(results);
-    });
+  
+      res.json({ message: "Inicio de sesión exitoso", usuario: user.usuario });
+    } catch (error) {
+      res.status(500).json({ error: "Error al iniciar sesión" });
+    }
   });
+  
 
-// Iniciar servidor
-const PORT = 5000;
+const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
-  console.log(`Servidor corriendo en http://localhost:${PORT}`);
+  console.log(` Servidor corriendo en http://localhost:${PORT}`);
 });

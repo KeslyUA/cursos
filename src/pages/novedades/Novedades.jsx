@@ -1,4 +1,5 @@
 import * as React from 'react';
+import '../novedades/novedades.css'
 
 const Novedades = () => {
     return (
