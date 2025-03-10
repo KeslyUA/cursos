@@ -1,0 +1,92 @@
+.fondo-cursos{
+    background: linear-gradient(#3e20dc,#6e43f9);
+    height: 100vw;
+    width:100% ;
+    place-items: center;
+    display: flex;
+    flex-direction: column;
+    
+}
+.principal{
+    display: flex;
+    height: 30%;
+    width: 90%;
+    gap: 35px;
+    justify-content: center;
+}
+.contenedor{
+    height: 90%;
+    width: 75%;
+    background-color: #ffffff;
+    margin-top: 35px;
+    border-radius: 50px;
+    
+}
+.certificaciones{
+    background-color: #ffffff;
+height: 90%;
+width: 20%;
+margin-top: 35px;
+border-radius: 50px;
+display: flex;
+flex-direction: column;
+gap: 10px;
+place-items: center;
+align-items: center;
+}
+.item-certi{
+    background-color: #979393;
+height: 15%;
+width: 80%;
+}
+.disponibles{
+    height: 50%;
+    width: 80%;
+    display: flex;
+    justify-content: center;
+    column-gap: 40px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+    
+    
+}
+.clase{
+    width: 30%;
+    height: 30%;
+    background-color: rgb(73, 84, 248);
+    place-items: center;
+    border-radius:15px ;
+    font-family: "Open Sans", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 700;
+    font-style: normal;
+    font-variation-settings:
+      "wdth" 100;
+    color: rgb(255, 255, 255);
+    margin-bottom: 70px;
+}
+.imagen{
+    background-image: url(../../img/imagen-muestra.jpg);
+    width: 90%;
+    height: 70%;
+    border-radius:15px ;
+    margin-top: 15px;
+}
+.titulo-c{
+    font-family: "Open Sans", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 700;
+    font-style: normal;
+    font-variation-settings:
+      "wdth" 100;
+    color: rgb(255, 255, 255);
+}
+.titulo-cer{
+    font-family: "Open Sans", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 700;
+    font-style: normal;
+    font-variation-settings:
+      "wdth" 100;
+    color: rgb(5, 5, 5);
+}

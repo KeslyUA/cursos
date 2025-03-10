@@ -1,5 +1,5 @@
-import { login } from '../utils/auth';
-console.log("si trae",document.getElementById("ingresar").value)
+
+
 
 document.getElementById("ingresar").addEventListener("click",async ()=>{
   const usuario = document.getElementById("usuario").value;

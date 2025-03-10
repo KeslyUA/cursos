@@ -9,7 +9,7 @@ datasource db {
 
 model usuarios {
   id            Int       @id @default(autoincrement())
-  usuario       String?   @db.VarChar(50)
+  usuario       String?   @db.VarChar(50) @unique
   contraseña   String?   @db.VarChar(50)
   fechacreacion DateTime? @default(now()) @db.DateTime(0)
 }

@@ -5,9 +5,8 @@ const Comunidad = () => {
     return (
         
         <div>
-            <div className='fondo'>
+            <div className='fondo-comunidad'>
                 <div className='cuadro-seleccion'>
-
                 </div>
                 <div className='combo'>
                     

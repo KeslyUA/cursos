@@ -12,18 +12,23 @@ import AdbIcon from '@mui/icons-material/Adb';
 import HomeIcon from '@mui/icons-material/Home';
 import Button from '@mui/material/Button';
 import { NavLink, useNavigate } from 'react-router';
-import Login from '../dialogo/login/Login'; 
+import Login from '../dialogo/login/Login.jsx'; 
+import Avatar from '@mui/material/Avatar';
+import Stack from '@mui/material/Stack';
+import Tooltip from '@mui/material/Tooltip';
 
 const pages = [
   ['Explorar', 'explorar'], 
   ['Comunidad', 'comunidad'], 
-  ['Novedades', 'novedades']
+  ['Novedades', 'novedades'],
+  ['Publicacion','publicacion']
 ];
 
 function ResponsiveAppBar() {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
   const [openLoginDialog, setOpenLoginDialog] = React.useState(false); 
+  const [isAuthenticated, setIsAuthenticated] = React.useState(false);
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -45,7 +50,7 @@ function ResponsiveAppBar() {
 
   return (
     <React.Fragment>
-      <AppBar position="static" sx={{backgroundColor:'#152e57'}}>              
+      <AppBar position="static" sx={{backgroundColor:'#170abe'}}>              
         <Container maxWidth="xl">
           <Toolbar disableGutters>
             <HomeIcon fontSize="small" sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
@@ -136,14 +141,22 @@ function ResponsiveAppBar() {
               ))}
             </Box>
             <Box sx={{ flexGrow: 0 }}>
-              <Button variant="outlined" sx={{ color: 'white', borderColor: 'white' }} onClick={handleOpenLoginDialog}>
-                Iniciar sesión
-              </Button>
+            {isAuthenticated ? (
+    <Tooltip title="Perfil">
+      <IconButton sx={{ p: 0 }}>
+        <Avatar alt="Usuario" src="/static/images/avatar/2.jpg" />
+      </IconButton>
+    </Tooltip>
+  ) : (
+    <Button variant="outlined" sx={{ color: 'white', borderColor: 'white' }} onClick={handleOpenLoginDialog}>
+      Iniciar sesión
+    </Button>
+  )}
             </Box>
           </Toolbar>
         </Container>
       </AppBar>
-      <Login open={openLoginDialog} onClose={handleCloseLoginDialog} />
+      <Login open={openLoginDialog} onClose={handleCloseLoginDialog} setIsAuthenticated={setIsAuthenticated}  />
     </React.Fragment>
   );
 }
