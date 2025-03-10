@@ -13,3 +13,17 @@ model usuarios {
   contraseña   String?   @db.VarChar(50)
   fechacreacion DateTime? @default(now()) @db.DateTime(0)
 }
+
+model cursos{
+   id           Int      @id @default(autoincrement())
+  titulo       String?  @db.VarChar(70) 
+  descripcion  String?  @db.VarChar(100)
+  area         String?  @db.VarChar(50)
+  duracion     String?  @db.VarChar(50)
+  fechaPublica DateTime? 
+  fechaCierre  DateTime?
+  certificado   String?   @db.VarChar(50)
+  cursoLibre    String?   @db.VarChar(50)
+  evaluacion    String?   @db.VarChar(50)
+  obligatorio   String?   @db.VarChar(50)
+}

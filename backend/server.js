@@ -31,8 +31,8 @@ app.post("/login", async (req, res) => {
 
   try {
     console.log("Buscando usuario en la base de datos...");
-    const user = await prisma.usuarios.findUnique({
-      where: { usuario },
+    const user = await prisma.usuarios.findFirst({
+      where: { usuario:usuario },
     });
 
     console.log("Usuario encontrado:", user);
@@ -45,11 +45,57 @@ app.post("/login", async (req, res) => {
     res.json({ message: "Inicio de sesión exitoso", usuario: user.usuario });
 
   } catch (error) {
-    console.error("⚠️ Error en login:", error);  
+    console.error(" Error en login:", error);  
     res.status(500).json({ error: error.message });
   }
 });
+// Ruta para obtener los cursos
+app.get("/cursos", async (req, res) => {
+  try {
+    const cursos = await prisma.cursos.findMany();
+    res.json(cursos); // Devuelve los datos en formato JSON
+  } catch (error) {
+    res.status(500).json({ error: "Error al obtener los cursos" });
+  }
+});
 
+//para guardar los cursos
+app.post("/cursos", async (req, res) => {
+  try {
+    const { titulo, 
+      descripcion, 
+      area,
+      duracion,
+      fechaPublica,
+      fechaCierre,
+      certificado,
+      cursoLibre,
+      evaluacion,
+      obligatorio
+     } = req.body; 
+
+    
+    const nuevoCurso = await prisma.cursos.create({
+      data: {
+        titulo,
+        descripcion,
+        area,
+        duracion,
+        fechaPublica: fechaPublica ? new Date(fechaPublica) : null, 
+        fechaCierre: fechaCierre ? new Date(fechaCierre) : null,
+        certificado,
+        cursoLibre,
+        evaluacion,
+        obligatorio,
+      },
+    });
+
+    res.status(201).json(nuevoCurso);
+  } catch (error) {
+    console.error("Error al agregar usuario:", error);
+    res.status(500).json({ error: "Error al agregar usuario" });
+  }
+});
   
 
 const PORT = process.env.PORT || 3001;

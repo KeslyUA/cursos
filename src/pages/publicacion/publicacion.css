@@ -1,10 +1,12 @@
 .publicacion{
-    height: 100vw;
+    height: 90vw;
     width: 100%;
-    background-color: rgb(136, 174, 245);
+    background-color: #6a80fc;
     justify-content: center;
     display: flex;
     flex-direction: column;
+    gap: 200px;
+    
     
 }
 .contenedor-publicacion{
@@ -13,24 +15,25 @@
     display: flex;
     gap: 45px;
     justify-content: center;
-    margin-top: -35vw;
-    margin-bottom: -4vw;
+    margin-top: -20px;
+    position: relative;
+    
 }
 .conteiner-videos{
-    height: 80%;
+    height: 600px;
     width: 60%;
-    background-color: rgb(255, 255, 255);
-    border-radius: 50px;
+    border-radius: 30px;
     margin-top: 35px;
     display: flex;
     gap: 50px;
     justify-content: center;
+    background-color: rgb(255, 255, 255);
+    
 }
 .conteiner-agregar{
-    height: 80%;
+    height: 600px;
     width: 20%;
-    background-color: rgb(255, 255, 255);
-    border-radius: 50px;
+    border-radius: 30px;
     margin-top: 35px;
     font-family: "Open Sans", sans-serif;
     font-optical-sizing: auto;
@@ -40,6 +43,9 @@
       "wdth" 100;
     color: rgb(20, 20, 19);
     justify-items: center;
+    
+    background-color: rgba(22, 22, 22, 0.5);
+    border-color: black; 
    
 }
 .conf-sup{
@@ -53,7 +59,6 @@
    display: flex;
     flex-direction: column;
     gap: 15px;
-    
 }
 .box-videos{
     height: 90%;
@@ -90,31 +95,51 @@
     place-items: center;
 }
 .contenedor-inferior{
-    height: 400px;
+    height: 40%;
     width: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 45px;
-    background-color: aquamarine;
+    gap: 200px;
+    position: relative;
 }
 .evaluacion{
     height: 80%;
-    width: 60%;
-    background-color: #ffffff;
-    border-radius: 50px;
+    width: 500px;
     place-items: center;
+    border-color:#000000;
+    box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3);
+    
+    background-color: rgba(179, 179, 184, 0.5);
 }  
 
 .pregunta{
     height: 70%;
     width: 80%;
-    background-color: rgb(102, 78, 47);
-    margin-top: 30px;
+    
+    margin-top: 50px;
 }
 .participantes{
     height: 80%;
-    width: 20%;
+    width: 400px;
     background-color: rgb(255, 255, 255);
-    border-radius: 50px;
+    box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    background-color: rgba(179, 179, 184, 0.5);
+}
+.text-pregunta{
+    font-family: "Roboto", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+  font-variation-settings:
+    "wdth" 100;
+    color: rgb(0, 0, 0);
+}
+.alternativas{
+    display: flex;
+    flex-direction: column;
+    width: 300px;
+    height: 300px;
+    
 }

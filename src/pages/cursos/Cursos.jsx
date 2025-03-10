@@ -1,22 +1,19 @@
-
+import './cursos.css'
 import { useEffect, useState } from "react";
 import FormularioVideo from '../publicacion/guardar/Guardar.jsx';
-import '../cursos/cursos.css'
 
 const Cursos = () => {
     const [videoData, setVideoData] = useState(null);
+    const [cursos, setCursos] = useState([]);
 
-  useEffect(() => {
-    const storedData = localStorage.getItem("videoData");
-    if (storedData) {
-      setVideoData(JSON.parse(storedData));
-    }
-  }, []);
-
-  if (!videoData) {
-    return <p>No hay video guardado.</p>;
-  }
-
+    useEffect(() => {
+        fetch("http://localhost:3001/cursos") // Llama a la API owo
+          .then((response) => response.json())
+          .then((data) => setCursos(data))
+          .catch((error) => console.error("Error al obtener cursos:", error));
+      }, []);
+    
+  
     return (
         <div className='fondo-cursos'>
             <style>
@@ -48,18 +45,23 @@ const Cursos = () => {
             </div>
             <p className='titulo-c'>Cursos Disponibles</p>
             <div className='disponibles'>
-                
-                <div className='clase'>
-                <p>Seguridad industrial</p>
-                <div className='imagen'>
+                //videos conteiners
                 <div>
-                    <h2>{videoData.titulo}</h2>
-                    <p>{videoData.descripcion}</p>
-                    <video controls width="300">
-                        <source src={videoData.video} type="video/mp4" />
-                    </video>
+                    {cursos.map((curso) =>(
+                        <li key={curso.id}>
+                        <h3>{curso.titulo}</h3>
+                        <p>{curso.descripcion}</p>
+                        <p><strong>Área:</strong> {curso.area}</p>
+                        <p><strong>Duración:</strong> {curso.duracion}</p>
+                        <p><strong>Fecha de Publicación:</strong> {new Date(curso.fechaPublica).toLocaleDateString()}</p>
+                        <p><strong>Fecha de Cierre:</strong> {new Date(curso.fechaCierre).toLocaleDateString()}</p>
+                      </li>
+
+                    )
+                    )}
+
                 </div>
-                </div>
+                
                 </div>
                 <div className='clase'>
                 <p>Seguridad industrial</p>

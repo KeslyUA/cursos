@@ -50,10 +50,10 @@ function ResponsiveAppBar() {
 
   return (
     <React.Fragment>
-      <AppBar position="static" sx={{backgroundColor:'#170abe'}}>              
+      <AppBar position="static" sx={{backgroundColor:'#1d1542cc'}}>              
         <Container maxWidth="xl">
           <Toolbar disableGutters>
-            <HomeIcon fontSize="small" sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
+            <HomeIcon fontSize="small" sx={{ display: { xs: 'none', md: 'flex' }, mr: 1, color:'#16eca5cc'}} />
             <Typography
               variant="h6"
               noWrap
@@ -65,11 +65,11 @@ function ResponsiveAppBar() {
                 fontFamily: 'monospace',
                 fontWeight: 700,
                 letterSpacing: '.3rem',
-                color: 'inherit',
+                color: '#16eca5cc',
                 textDecoration: 'none',
               }}
             >
-              LOGO
+              SEPCON
             </Typography>
 
             <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
@@ -126,7 +126,7 @@ function ResponsiveAppBar() {
                 textDecoration: 'none',
               }}
             >
-              LOGO
+              SEPCON
             </Typography>
 
             <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
@@ -148,7 +148,7 @@ function ResponsiveAppBar() {
       </IconButton>
     </Tooltip>
   ) : (
-    <Button variant="outlined" sx={{ color: 'white', borderColor: 'white' }} onClick={handleOpenLoginDialog}>
+    <Button variant="outlined" sx={{ color: 'white', borderColor: '#2254facc',backgroundColor:'#1046f5cc' }} onClick={handleOpenLoginDialog}>
       Iniciar sesión
     </Button>
   )}
