@@ -18,11 +18,14 @@ const Explorar = () => {
                     
                 </div>
                 </div>
-                
                 <div className='contenedor-dos'>
                 <h2 className='subtitulo'>cursos disponibles:</h2>
                 <br />
                 <div className='combo'>
+                    <div className='box'>
+                        <p>Seguridad Industrial</p>
+                        <div className='img'></div>
+                    </div>
                     <div className='box'>
                         <p>Seguridad Industrial</p>
                         <div className='img'></div>
