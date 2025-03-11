@@ -1,5 +1,5 @@
 .fondo-cursos{
-    background: linear-gradient(#3e20dc,#6e43f9);
+    background-color: #6a80fc;
     height: 100vw;
     width:100% ;
     place-items: center;
@@ -19,7 +19,19 @@
     width: 75%;
     background-color: #ffffff;
     margin-top: 35px;
-    border-radius: 50px;
+    border-radius: 10px;
+    overflow-y: auto;
+    display: flex;
+    place-items: center;
+}
+.fondo{
+    width:  100%;
+    height: 100%;
+    background-color: #383a42;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    flex-wrap: wrap;
     
 }
 .certificaciones{
@@ -27,12 +39,11 @@
 height: 90%;
 width: 20%;
 margin-top: 35px;
-border-radius: 50px;
+border-radius: 10px;
 display: flex;
 flex-direction: column;
 gap: 10px;
 place-items: center;
-align-items: center;
 }
 .item-certi{
     background-color: #979393;
@@ -40,30 +51,44 @@ height: 15%;
 width: 80%;
 }
 .disponibles{
-    height: 50%;
-    width: 80%;
+    height: 100%;
+    width: 100%;
     display: flex;
     justify-content: center;
     column-gap: 40px;
-    margin-top: 20px;
     flex-wrap: wrap;
-    
-    
+    margin-top: 20px;
+    overflow-y: auto;
+    max-height: 1500px;
 }
 .clase{
-    width: 30%;
-    height: 30%;
-    background-color: rgb(73, 84, 248);
+    width: 400px;
+    height: 250px;
+    background-color: rgb(13, 25, 189);
+    margin-bottom: 50px;
+    flex-direction: column;
     place-items: center;
-    border-radius:15px ;
-    font-family: "Open Sans", sans-serif;
+    border-radius: 20px;
+}
+.clase-linea{
+    display: flex;
+    gap: 130px;
+    margin-top: 23px;
+}
+.font{
+    font-family: "Roboto", sans-serif;
     font-optical-sizing: auto;
-    font-weight: 700;
+    font-weight: 400;
     font-style: normal;
     font-variation-settings:
       "wdth" 100;
-    color: rgb(255, 255, 255);
-    margin-bottom: 70px;
+      color: rgb(255, 255, 255);
+}
+.imagen-curso{
+    height: 60%;
+    width: 80%;
+    background-color: #979393;
+    margin-top: 10px;
 }
 .imagen{
     background-image: url(../../img/imagen-muestra.jpg);
@@ -80,6 +105,7 @@ width: 80%;
     font-variation-settings:
       "wdth" 100;
     color: rgb(255, 255, 255);
+    font-size: 20px;
 }
 .titulo-cer{
     font-family: "Open Sans", sans-serif;
@@ -89,4 +115,26 @@ width: 80%;
     font-variation-settings:
       "wdth" 100;
     color: rgb(5, 5, 5);
+}
+.clase-agregada{
+height: 300px;
+width: 250px;
+background-color: aqua;
+place-items: center;
+position: relative;
+margin-top: 30px;
+
+align-items: center;
+}
+.arreglo-titulo{
+    height: 10%;
+    width: 100%;
+    background-color: aquamarine;
+    place-items: center;
+}
+.imagen-clase{
+    
+    width: 90%;
+    height: 70%;
+    background-color: rgb(28, 66, 54);
 }

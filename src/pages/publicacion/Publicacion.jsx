@@ -9,6 +9,8 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import dayjs from "dayjs";
+import {storage} from '../../../src/firebaseConfig.js';
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 const Publicacion = () => {
     const [video, setVideo] = useState(null);
@@ -24,13 +26,21 @@ const Publicacion = () => {
         cursoLibre: "",
         evaluacion: "",
         obligatorio: "",
+        videoURL:""
     });
-    const handleFileSelect = (event) => {
-        const file = event.target.files[0]; 
-        if (file) {
-          const videoURL = URL.createObjectURL(file); // Crea una URL temporal
-          setVideo(videoURL);
+    const handleFileSelect = async (event) => {
+        const file = event.target.files[0];
+    if (file) {
+        try {
+            const storageRef = ref(storage, `videos/${file.name}`);
+            await uploadBytes(storageRef, file); 
+            const downloadURL = await getDownloadURL(storageRef); 
+            console.log("URL del video:", downloadURL);
+            setVideo(downloadURL); 
+        } catch (error) {
+            console.error("Error al subir el video:", error);
         }
+    }
       };
 
       const handleChange = (e) => {
@@ -40,27 +50,53 @@ const Publicacion = () => {
         });
     };
 
-    const handleGuardar = () => {
+    const handleGuardar = async () => {
         const nuevaPublicacion = {
             ...formData,
-            video
+            fechaPublica: formData.fechaPublica ? dayjs(formData.fechaPublica).format("YYYY-MM-DD") : null,
+            fechaCierre: formData.fechaCierre ? dayjs(formData.fechaCierre).format("YYYY-MM-DD") : null,
+            videoURL: video
         };
-        console.log("Publicación guardada:", nuevaPublicacion);
-        setPublicaciones([...publicaciones, nuevaPublicacion]);
-        setFormData({
-            titulo: "",
-            descripcion: "",
-            area: "",
-            duracion: "",
-            fechaPublica: "",
-            fechaCierre: "",
-            certificado: "",
-            cursoLibre: "",
-            evaluacion: "",
-            obligatorio: "",
-        });
-        setVideo(null);
+    
+        try {
+            const response = await fetch("http://localhost:3001/cursos", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(nuevaPublicacion),
+            });
+    
+            if (!response.ok) {
+                throw new Error("Error al guardar el curso");
+            }
+    
+            const data = await response.json();
+            console.log("Curso guardado correctamente a la base:", data);
+    
+            setPublicaciones([...publicaciones, data]);
+    
+            // Resetear formulario después de guardar
+            setFormData({
+                titulo: "",
+                descripcion: "",
+                area: "",
+                duracion: "",
+                fechaPublica: "",
+                fechaCierre: "",
+                certificado: "",
+                cursoLibre: "",
+                evaluacion: "",
+                obligatorio: "",
+                videoURL:""
+            });
+    
+            setVideo(null);
+        } catch (error) {
+            console.error("Error al enviar los datos:", error);
+        }
     };
+    
     
       const openFileDialog = () => {
         document.getElementById("videoInput").click();
@@ -93,33 +129,33 @@ const Publicacion = () => {
                                         <div className='arreglo'>
                                         
                                         <LocalizationProvider dateAdapter={AdapterDayjs}>
-  <DatePicker
-    label="Fecha Publica"
-    value={formData.fechaPublica ? dayjs(formData.fechaPublica) : null} // Convertir a Dayjs
-    onChange={(newValue) =>
-      setFormData({
-        ...formData,
-        fechaPublica: newValue ? newValue.format("YYYY-MM-DD") : "" // Guardar como string
-      })
-    }
-    sx={{ width: 500, maxWidth: '40%' }}
-    renderInput={(params) => <TextField {...params} fullWidth />}
-  />
-</LocalizationProvider>
-<LocalizationProvider dateAdapter={AdapterDayjs}>
-  <DatePicker
-    label="Fecha Cierre"
-    value={formData.fechaCierre ? dayjs(formData.fechaCierre) : null}
-    onChange={(newValue) =>
-      setFormData({
-        ...formData,
-        fechaCierre: newValue ? newValue.format("YYYY-MM-DD") : ""
-      })
-    }
-    sx={{ width: 500, maxWidth: '40%' }}
-    renderInput={(params) => <TextField {...params} fullWidth />}
-  />
-</LocalizationProvider>
+                                            <DatePicker
+                                                label="Fecha Publica"
+                                                value={formData.fechaPublica ? dayjs(formData.fechaPublica) : null}
+                                                onChange={(newValue) =>
+                                                setFormData({
+                                                    ...formData,
+                                                    fechaPublica: newValue ? newValue.format("YYYY-MM-DD") : ""
+                                                })
+                                                }
+                                                sx={{ width: 500, maxWidth: '40%' }}
+                                                renderInput={(params) => <TextField {...params} fullWidth />}
+                                            />
+                                        </LocalizationProvider>
+                                        <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                            <DatePicker
+                                                label="Fecha Cierre"
+                                                value={formData.fechaCierre ? dayjs(formData.fechaCierre) : null}
+                                                onChange={(newValue) =>
+                                                setFormData({
+                                                    ...formData,
+                                                    fechaCierre: newValue ? newValue.format("YYYY-MM-DD") : ""
+                                                })
+                                                }
+                                                sx={{ width: 500, maxWidth: '40%' }}
+                                                renderInput={(params) => <TextField {...params} fullWidth />}
+                                            />
+                                        </LocalizationProvider>
                                         <Box sx={{ width: 500, maxWidth: '30%' }}>
                                             <TextField fullWidth label="Certificado" id="Certificado" name='certificado' value={formData.certificado} onChange={handleChange}/>
                                         </Box>

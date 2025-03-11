@@ -8,8 +8,14 @@ const app = express();
 const prisma = new PrismaClient();
 
 
-app.use(cors());
+app.use(cors({
+  origin: "http://localhost:5173", // Permite solo este origen (React Vite)
+  methods: ["GET", "POST", "PUT", "DELETE"], // Métodos HTTP permitidos
+  allowedHeaders: ["Content-Type", "Authorization"], // Cabeceras permitidas
+  credentials: true, // Permite enviar cookies o credenciales
+}));
 app.use(express.json());
+
 
 // Obtener usuarios
 app.get("/usuarios", async (req, res) => {
@@ -53,9 +59,10 @@ app.post("/login", async (req, res) => {
 app.get("/cursos", async (req, res) => {
   try {
     const cursos = await prisma.cursos.findMany();
-    res.json(cursos); // Devuelve los datos en formato JSON
+    res.json(cursos); 
   } catch (error) {
-    res.status(500).json({ error: "Error al obtener los cursos" });
+  console.error("Error en la consulta de cursos:", error); 
+  res.status(500).json({ error: error.message }); 
   }
 });
 
@@ -71,7 +78,8 @@ app.post("/cursos", async (req, res) => {
       certificado,
       cursoLibre,
       evaluacion,
-      obligatorio
+      obligatorio,
+      videoURL
      } = req.body; 
 
     
@@ -87,13 +95,14 @@ app.post("/cursos", async (req, res) => {
         cursoLibre,
         evaluacion,
         obligatorio,
+        videoURL
       },
     });
 
     res.status(201).json(nuevoCurso);
   } catch (error) {
     console.error("Error al agregar usuario:", error);
-    res.status(500).json({ error: "Error al agregar usuario" });
+    res.status(500).json({ error: "Error al agregar curso" });
   }
 });
   
