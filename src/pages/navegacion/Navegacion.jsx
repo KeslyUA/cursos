@@ -23,21 +23,25 @@ const paginasPublicas = [
   ['Novedades', 'novedades']
 ];
 
-const paginasProtegidas=[
-  ['Explorar', 'explorar'], 
-  ['Comunidad', 'comunidad'], 
-  ['Novedades', 'novedades'],
+const paginasProtegidas={
+  administrador: [
+ 
   ['Cursos','cursos'],
 ['Publicacion','publicacion']
 
-];
+],
+usuario:[
+  ['Cursos','cursos'],
+]};
 
 function ResponsiveAppBar() {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
   const [openLoginDialog, setOpenLoginDialog] = React.useState(false); 
   const [isAuthenticated, setIsAuthenticated] = React.useState( !!localStorage.getItem("token"));
-  
+  //cargo de persona para ocultar rutas
+  const cargo = localStorage.getItem("cargo");
+
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
   };
@@ -63,7 +67,9 @@ function ResponsiveAppBar() {
 
   const navigate = useNavigate();
 
-   const pages = isAuthenticated ? paginasProtegidas : paginasPublicas;
+  const pages = isAuthenticated
+  ? [...paginasPublicas, ...paginasProtegidas[cargo === "administrador" ? "administrador" : "usuario"]]
+  : paginasPublicas;
   return (
     <React.Fragment>
       <AppBar position="static" sx={{backgroundColor:'#1d1542cc'}}>              
