@@ -17,19 +17,27 @@ import Avatar from '@mui/material/Avatar';
 import Stack from '@mui/material/Stack';
 import Tooltip from '@mui/material/Tooltip';
 
-const pages = [
+const paginasPublicas = [
+  ['Explorar', 'explorar'], 
+  ['Comunidad', 'comunidad'], 
+  ['Novedades', 'novedades']
+];
+
+const paginasProtegidas=[
   ['Explorar', 'explorar'], 
   ['Comunidad', 'comunidad'], 
   ['Novedades', 'novedades'],
-  ['Publicacion','publicacion']
+  ['Cursos','cursos'],
+['Publicacion','publicacion']
+
 ];
 
 function ResponsiveAppBar() {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
   const [openLoginDialog, setOpenLoginDialog] = React.useState(false); 
-  const [isAuthenticated, setIsAuthenticated] = React.useState(false);
-
+  const [isAuthenticated, setIsAuthenticated] = React.useState( !!localStorage.getItem("token"));
+  
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
   };
@@ -45,9 +53,17 @@ function ResponsiveAppBar() {
   const handleCloseLoginDialog = () => {
     setOpenLoginDialog(false); 
   };
+//funcion para cerrar sesion
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("cargo");
+    setIsAuthenticated(false);
+    window.location.href = "/Explorar"; 
+  };
 
   const navigate = useNavigate();
 
+   const pages = isAuthenticated ? paginasProtegidas : paginasPublicas;
   return (
     <React.Fragment>
       <AppBar position="static" sx={{backgroundColor:'#1d1542cc'}}>              
@@ -142,16 +158,22 @@ function ResponsiveAppBar() {
             </Box>
             <Box sx={{ flexGrow: 0 }}>
             {isAuthenticated ? (
-    <Tooltip title="Perfil">
-      <IconButton sx={{ p: 0 }}>
-        <Avatar alt="Usuario" src="/static/images/avatar/2.jpg" />
-      </IconButton>
-    </Tooltip>
-  ) : (
-    <Button variant="outlined" sx={{ color: 'white', borderColor: '#2254facc',backgroundColor:'#1046f5cc' }} onClick={handleOpenLoginDialog}>
-      Iniciar sesión
-    </Button>
-  )}
+              <Button
+                variant="outlined"
+                sx={{ color: 'white', borderColor: '#2254facc', backgroundColor: '#1046f5cc' }}
+                onClick={handleLogout}
+              >
+              Cerrar sesión
+              </Button>
+           ) : (
+              <Button
+                variant="outlined"
+                sx={{ color: 'white', borderColor: '#2254facc', backgroundColor: '#1046f5cc' }}
+                onClick={handleOpenLoginDialog}
+              >
+                Iniciar sesión
+              </Button>
+             )}
             </Box>
           </Toolbar>
         </Container>

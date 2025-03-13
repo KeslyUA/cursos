@@ -99,7 +99,7 @@ export default function Login({ open, onClose,setIsAuthenticated  }) {
               id="usuario"
               label="Usuario"
               value={usuario}
-              onChange={(e) => setUsuario(e.target.value)} // Capturar input
+              onChange={(e) => setUsuario(e.target.value)} 
             />
             <br />
             <TextField
@@ -108,7 +108,7 @@ export default function Login({ open, onClose,setIsAuthenticated  }) {
               type="password"
               autoComplete="current-password"
               value={contraseña}
-              onChange={(e) => setContraseña(e.target.value)} // Capturar input
+              onChange={(e) => setContraseña(e.target.value)} 
             />
           </Box>
         </DialogContentText>

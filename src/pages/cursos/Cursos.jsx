@@ -99,7 +99,7 @@ const Cursos = () => {
             <p className='titulo-c'>Cursos Disponibles</p>
             <div>
                 <div className='disponibles' >
-                    {cursos.map((curso) =>(console.log("hola",curso.id),
+                    {cursos.map((curso) =>(
                        <div key={curso.id} className='clase'>
                        <div className='clase-linea'>
                         <div className='font'>{curso.titulo}</div>

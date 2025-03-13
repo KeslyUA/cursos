@@ -3,7 +3,7 @@ import '../novedades/novedades.css'
 
 const Novedades = () => {
     return (
-        <div className='fondo'>
+        <div className='fondo-novedad'>
 
         </div>
     )
