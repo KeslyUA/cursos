@@ -3,22 +3,53 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const { PrismaClient } = require("@prisma/client");
-
+const jwt = require("jsonwebtoken");
 const app = express();
 const prisma = new PrismaClient();
 
+//middlerware
+const verificarToken = (rolesPermitidos) => {
+  return (req, res, next) => {
+    
+    const authHeader = req.headers["authorization"];
+    if (!authHeader) {
+      return res.status(403).json({ error: "Acceso denegado. No hay token." });
+    }
+
+    const token = authHeader.split(" ")[1]; 
+    if (!token) {
+      return res.status(403).json({ error: "Acceso denegado. Token inválido." });
+    }
+
+    try {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET || "secreto_super_seguro");
+
+      if (!rolesPermitidos.includes(decoded.cargo)) {
+        return res.status(403).json({ error: "Acceso denegado. No tienes permisos." });
+      }
+
+      req.user = decoded; 
+      next();
+    } catch (error) {
+      return res.status(401).json({ error: "Token inválido o expirado." });
+    }
+  };
+};
+
+
+
 
 app.use(cors({
-  origin: "http://localhost:5173", // Permite solo este origen (React Vite)
-  methods: ["GET", "POST", "PUT", "DELETE"], // Métodos HTTP permitidos
-  allowedHeaders: ["Content-Type", "Authorization"], // Cabeceras permitidas
-  credentials: true, // Permite enviar cookies o credenciales
+  origin: "http://localhost:5173", 
+  methods: ["GET", "POST", "PUT", "DELETE"], 
+  allowedHeaders: ["Content-Type", "Authorization"], 
+  credentials: true,
 }));
 app.use(express.json());
 
 
 // Obtener usuarios
-app.get("/usuarios", async (req, res) => {
+app.get("/usuarios",verificarToken(["administrador"]), async (req, res) => {
   try {
     const usuarios = await prisma.usuarios.findMany();
     res.json(usuarios);
@@ -48,11 +79,16 @@ app.post("/login", async (req, res) => {
       return res.status(401).json({ error: "Usuario o contraseña incorrectos" });
     }
 
-    res.json({ message: "Inicio de sesión exitoso", usuario: user.usuario });
+    const token = jwt.sign(
+      { id:user.id, usuario: user.usuario, cargo: user.cargo },
+      process.env.JWT_SECRET || "secreto_super_seguro",
+      { expiresIn: "2h" }
+    );
 
+    res.json({ message: "Inicio de sesión exitoso", token });
   } catch (error) {
     console.error(" Error en login:", error);  
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error: "Error en el servidor" });
   }
 });
 // Ruta para obtener los cursos
@@ -67,8 +103,9 @@ app.get("/cursos", async (req, res) => {
 });
 
 //para guardar los cursos
-app.post("/cursos", async (req, res) => {
+app.post("/cursos",verificarToken(["administrador", "trabajador"]), async (req, res) => {
   try {
+    console.log("Usuario autenticado en la ruta /cursos:", req.user);
     const { titulo, 
       descripcion, 
       area,
@@ -79,9 +116,9 @@ app.post("/cursos", async (req, res) => {
       cursoLibre,
       evaluacion,
       obligatorio,
-      videoURL
+      videoURL,
      } = req.body; 
-
+     const idUsuario = req.user.id;
     
     const nuevoCurso = await prisma.cursos.create({
       data: {
@@ -95,7 +132,8 @@ app.post("/cursos", async (req, res) => {
         cursoLibre,
         evaluacion,
         obligatorio,
-        videoURL
+        videoURL,
+        idUsuario
       },
     });
 
@@ -129,3 +167,4 @@ app.listen(PORT, () => {
   console.log(` Servidor corriendo en http://localhost:${PORT}`);
 
 });
+

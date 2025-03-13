@@ -13,6 +13,8 @@ model usuarios {
   contraseña   String?   @db.VarChar(50)
   fechacreacion DateTime? @default(now()) @db.DateTime(0)
   cargo         String?   @db.VarChar(50)
+
+  cursos        cursos[]
 }
 
 model cursos {
@@ -28,4 +30,6 @@ model cursos {
   evaluacion   String?   @db.VarChar(50)
   obligatorio  String?   @db.VarChar(50)
   videoURL      String?
+  idUsuario     Int?  
+  usuario      usuarios?  @relation(fields: [idUsuario], references: [id]) 
 }

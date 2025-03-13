@@ -20,7 +20,9 @@ export default function Login({ open, onClose,setIsAuthenticated  }) {
   const [contraseña, setContraseña] = React.useState('');
   const [alerta, setAlerta] = React.useState(null);
 
-  async function Ingresar() {
+ 
+
+  /* async function Ingresar() {
     if (!usuario || !contraseña) {
       setAlerta({ tipo: 'error', mensaje: 'Por favor, completa todos los campos.' });
       return;
@@ -44,7 +46,42 @@ export default function Login({ open, onClose,setIsAuthenticated  }) {
       setAlerta({ tipo: 'error', mensaje: 'Error en el servidor. Inténtalo más tarde.' });
       console.error('Error en la autenticación:', error);
     }
-  }
+
+    //restriccion por cargo
+   
+  } */
+    async function Ingresar() {
+      if (!usuario || !contraseña) {
+        setAlerta({ tipo: "error", mensaje: "Completa todos los campos." });
+        return;
+      }
+    
+      try {
+        const response = await fetch("http://localhost:3001/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ usuario, contraseña }),
+        });
+    
+        const data = await response.json();
+    
+        if (response.ok) {
+          localStorage.setItem("token", data.token);
+    
+          const decoded = JSON.parse(atob(data.token.split(".")[1])); // Decodificar token
+          localStorage.setItem("cargo", decoded.cargo);
+    
+          setIsAuthenticated(true);
+          onClose();
+          window.location.href = "/Cursos";
+        } else {
+          setAlerta({ tipo: "error", mensaje: data.error });
+        }
+      } catch (error) {
+        setAlerta({ tipo: "error", mensaje: "Error en el servidor." });
+      }
+    }
+    
 
   return (
     <Dialog open={open} TransitionComponent={Transition} keepMounted onClose={onClose}>
@@ -76,7 +113,6 @@ export default function Login({ open, onClose,setIsAuthenticated  }) {
           </Box>
         </DialogContentText>
 
-        {/* 🔹 Renderizar alerta si hay un mensaje */}
         {alerta && <Alert severity={alerta.tipo} >{alerta.mensaje}</Alert>}
         
       </DialogContent>

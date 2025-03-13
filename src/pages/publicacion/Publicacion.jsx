@@ -9,8 +9,6 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import dayjs from "dayjs";
-import {storage} from '../../../src/firebaseConfig.js';
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 const Publicacion = () => {
     const [video, setVideo] = useState(null);
@@ -28,6 +26,8 @@ const Publicacion = () => {
         obligatorio: "",
         videoURL:""
     });
+
+    //este
     const handleFileSelect = async (event) => {
         const file = event.target.files[0];
     if (file) {
@@ -57,6 +57,7 @@ const Publicacion = () => {
     
 
     const handleGuardar = async () => {
+        const token = localStorage.getItem("token");
         const nuevaPublicacion = {
             ...formData,
             fechaPublica: formData.fechaPublica ? dayjs(formData.fechaPublica).format("YYYY-MM-DD") : null,
@@ -69,6 +70,7 @@ const Publicacion = () => {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
+                     "Authorization": `Bearer ${token}`
                 },
                 body: JSON.stringify(nuevaPublicacion),
             });
@@ -111,6 +113,8 @@ const Publicacion = () => {
       const youtubeRegex = /(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]+)/;
     
     const videoId = video ? (video.match(youtubeRegex)?.[1] || "") : "";
+
+    const [usuarios, setUsuarios] = useState([]);
 
     return (
         <div>
@@ -198,14 +202,16 @@ const Publicacion = () => {
                             {video && (
                                 <div style={{ marginTop: "20px", width: "100%", maxWidth: "600px", margin: "auto" }}>
                                 <p>seleccionado:</p>
-                                {/* <video 
+                                 <video 
                                     controls 
                                     style={{ width: "100%", height: "auto", borderRadius: "10px" }}
                                     >
                                     <source src={video} type="video/mp4" />
                                          Tu navegador no soporta videos.
-                                    </video> */}
-                                    <iframe
+                                    </video> 
+
+
+                                    {/* <iframe
                                         width="100%"
                                         height="315"
                                         src={`https://www.youtube.com/embed/${videoId}`}
@@ -214,16 +220,16 @@ const Publicacion = () => {
                                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                                         allowFullScreen
                                         style={{ borderRadius: "10px" }}
-                                    ></iframe>
+                                    ></iframe> */}
                                 </div>
                             )}
                             </div>
                             </div>
-                            <div className='url'>
+                           {/*  <div className='url'>
                                  <Box sx={{ width: '100%', maxWidth: '100%' }}>
                                             <TextField fullWidth label="url del video" id="videoURL" name='videoURL' value={formData.videoURL} onChange={handleChange}/>
                                 </Box>
-                            </div>
+                            </div> */}
                             
                            
                             <div className='box-boton'>
@@ -237,6 +243,12 @@ const Publicacion = () => {
                     </div>
                     <div className="conteiner-agregar">
                         <p className='text-pregunta' style={{color:'white',fontSize:'20px'}}>Mis Publicaciones activas</p>
+                        { usuarios.map((usuario)=>{
+                            <div key={usuario.id} className='publicaciones'>
+                                <div></div>
+
+                            </div>
+                        }) }
 
                     </div>
                     </div>
