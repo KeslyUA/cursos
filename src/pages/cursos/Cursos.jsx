@@ -46,24 +46,31 @@ const Cursos = () => {
                 <div className='contenedor'>
                 {cursosSeleccionados.length> 0 &&(
                      <div className='fondo'>
-                     {cursosSeleccionados.map((curso) => (console.log("hola",curso.id),
+                     {cursosSeleccionados.map((curso) => (
                          <div key={curso.id} className='clase-agregada' >
                             <br />
+                            
                              <div className='arreglo-titulo'>
-                                 <div className='font'>{curso.titulo}</div>
-                                 <div className='font'>{curso.descripcion}</div>
-                                 <p><strong>Área:</strong> {curso.area}</p>
-                                <p><strong>Duración:</strong> {curso.duracion}</p>
-                                <p>
+                                 <div className='titulo'>{curso.titulo}</div>
+                                 <div className='ima-video'></div>
+                                 <div className='descripcion'>
+                                    {/* <p><strong>Descripcion:</strong> {curso.descripcion}</p>
+                                    <p><strong>Área:</strong> {curso.area}</p>
+                                     */}<p><strong>Duración:</strong> {curso.duracion}</p>
+                                     <p>
                                     <strong>Fecha de Publicación:</strong> 
                                     {curso.fechaPublica ? new Date(curso.fechaPublica).toLocaleDateString() : "No disponible"}
-                                </p>
-                                <p>
+                                     </p>
+                                    <p>
                                     <strong>Fecha de Cierre:</strong> 
                                     {curso.fechaCierre ? new Date(curso.fechaCierre).toLocaleDateString() : "No disponible"}
-                                </p> 
+                                    </p> 
+                                 </div>
+                                 <Button variant="contained" size="small">
+                                    reanudar
+                                </Button>
+                                    
                              </div>
-                             <div className='imagen-clase'></div>
                          </div>
                      ))}
                  </div>

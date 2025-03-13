@@ -106,6 +106,23 @@ app.post("/cursos", async (req, res) => {
   }
 });
   
+//opcional recibir url youtube
+app.post("/guardar-url-video", async (req, res) => {
+  const { videoURL } = req.body;
+
+  try {
+    const nuevoCurso = await prisma.cursos.create({
+      data: {
+        videoURL: videoURL  // Guardar la URL en MySQL
+      }
+    });
+
+    res.json({ mensaje: "URL guardada", videoURL: nuevoCurso });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error al guardar la URL" });
+  }
+});
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {

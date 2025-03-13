@@ -24,6 +24,7 @@
     display: flex;
     place-items: center;
     place-content: center;
+    background: rgba(0, 0, 0, 0.2);
 }
 .fondo{
     width:  90%;
@@ -43,7 +44,6 @@ border-radius: 10px;
 display: flex;
 flex-direction: column;
 gap: 10px;
-background-color: bisque;
 place-items: center;
 }
 .item-certi{
@@ -73,8 +73,10 @@ width: 80%;
 }
 .clase-linea{
     display: flex;
-    gap: 130px;
+    gap: 13px;
     margin-top: 23px;
+    width: 80%;
+    height: 15%;
 }
 .font{
     font-family: "Roboto", sans-serif;
@@ -84,6 +86,8 @@ width: 80%;
     font-variation-settings:
       "wdth" 100;
       color: rgb(255, 255, 255);
+      width: 100%;
+
 }
 .imagen-curso{
     height: 60%;
@@ -107,6 +111,7 @@ width: 80%;
       "wdth" 100;
     color: rgb(255, 255, 255);
     font-size: 20px;
+    margin-top: 10vh;
 }
 .titulo-cer{
     font-family: "Open Sans", sans-serif;
@@ -124,18 +129,34 @@ background-color: aqua;
 place-items: center;
 position: relative;
 margin-top: 30px;
-
 align-items: center;
 }
 .arreglo-titulo{
-    height: 10%;
+    height: 100%;
     width: 100%;
     background-color: aquamarine;
     place-items: center;
+    display: flex;
+    flex-direction: column;
+    gap: 1vh;
 }
 .imagen-clase{
     
     width: 90%;
     height: 70%;
-    background-color: rgb(28, 66, 54);
+}
+.ima-video{
+    width:90%;
+    height: 40%;
+    background-color: #979393;
+}
+.descripcion{
+    width: 30vh;
+    height: auto;
+    place-items: center;
+    font-size: 9px;
+}
+.titulo{
+    width: 90%;
+    height: 10%;
 }

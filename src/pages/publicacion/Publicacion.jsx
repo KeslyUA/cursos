@@ -44,11 +44,17 @@ const Publicacion = () => {
       };
 
       const handleChange = (e) => {
+        const { name, value } = e.target;
         setFormData({
             ...formData,
-            [e.target.name]: e.target.value
+            [name]: value
         });
+    
+        if (name === "videoURL") {
+            setVideo(value);
+        }
     };
+    
 
     const handleGuardar = async () => {
         const nuevaPublicacion = {
@@ -101,6 +107,11 @@ const Publicacion = () => {
       const openFileDialog = () => {
         document.getElementById("videoInput").click();
       };
+      
+      const youtubeRegex = /(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]+)/;
+    
+    const videoId = video ? (video.match(youtubeRegex)?.[1] || "") : "";
+
     return (
         <div>
              <style>
@@ -187,17 +198,34 @@ const Publicacion = () => {
                             {video && (
                                 <div style={{ marginTop: "20px", width: "100%", maxWidth: "600px", margin: "auto" }}>
                                 <p>seleccionado:</p>
-                                <video 
+                                {/* <video 
                                     controls 
                                     style={{ width: "100%", height: "auto", borderRadius: "10px" }}
                                     >
                                     <source src={video} type="video/mp4" />
                                          Tu navegador no soporta videos.
-                                    </video>
+                                    </video> */}
+                                    <iframe
+                                        width="100%"
+                                        height="315"
+                                        src={`https://www.youtube.com/embed/${videoId}`}
+                                        title="YouTube Video"
+                                        frameBorder="0"
+                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                        allowFullScreen
+                                        style={{ borderRadius: "10px" }}
+                                    ></iframe>
                                 </div>
                             )}
                             </div>
                             </div>
+                            <div className='url'>
+                                 <Box sx={{ width: '100%', maxWidth: '100%' }}>
+                                            <TextField fullWidth label="url del video" id="videoURL" name='videoURL' value={formData.videoURL} onChange={handleChange}/>
+                                </Box>
+                            </div>
+                            
+                           
                             <div className='box-boton'>
                             <Stack direction="row" spacing={2}>
                                 <Button variant="contained" color="success" onClick={openFileDialog}>Agregar</Button>

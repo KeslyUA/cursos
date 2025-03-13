@@ -16,6 +16,10 @@ const Explorar = () => {
               })
               .catch((error) => console.error("Error al obtener cursos:", error));
         }, []);
+
+
+        
+    
     return (
          
             <div>
@@ -40,9 +44,8 @@ const Explorar = () => {
                        <div key={curso.id} className='box'>
                             <div className='box-sub'>
                                 <div className='titulo-box'>{curso.titulo}</div>
-                                
                             </div> 
-                            <div className='img-curso'></div>
+                            <div className='img-curso'>{curso.video}</div>
                         </div>
 
                     )
