@@ -12,6 +12,7 @@ model usuarios {
   usuario       String?   @db.VarChar(50)
   contraseña   String?   @db.VarChar(50)
   fechacreacion DateTime? @default(now()) @db.DateTime(0)
+  cargo         String?   @db.VarChar(50)
 }
 
 model cursos {
@@ -26,4 +27,5 @@ model cursos {
   cursoLibre   String?   @db.VarChar(50)
   evaluacion   String?   @db.VarChar(50)
   obligatorio  String?   @db.VarChar(50)
+  videoURL      String?
 }
