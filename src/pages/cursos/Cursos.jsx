@@ -10,11 +10,23 @@ const Cursos = () => {
 
 
     useEffect(() => {
-        fetch("http://localhost:3001/cursos")
+        const token = localStorage.getItem("token");
+
+        if (!token) {
+            console.error("No hay token almacenado en localStorage.");
+            return;
+          }
+        fetch("http://localhost:3001/cursos", {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`, 
+            },
+          })
           .then((response) => response.json())
           .then((data) => {
-              console.log("Datos recibidos:", data); // Ver qué devuelve la API
-              setCursos(Array.isArray(data) ? data : []); // Asegurar que sea un array
+              console.log("Datos recibidos:", data); 
+              setCursos(Array.isArray(data) ? data : []); 
           })
           .catch((error) => console.error("Error al obtener cursos:", error));
     }, []);

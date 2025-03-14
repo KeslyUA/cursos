@@ -4,14 +4,16 @@ import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
-import { useState } from "react";
+import { useState,useRef } from "react";
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import dayjs from "dayjs";
 
 const Publicacion = () => {
-    const [video, setVideo] = useState(null);
+    const [videoSrc, setVideoSrc] = useState(null);
+    const [videoURL, setVideoURL] = useState(null);
+    const Referencia= useRef(null)
     const [publicaciones, setPublicaciones] = useState([]);
     const [formData, setFormData] = useState({
         titulo: "",
@@ -24,63 +26,94 @@ const Publicacion = () => {
         cursoLibre: "",
         evaluacion: "",
         obligatorio: "",
-        videoURL:""
+        setVideoURL:""
     });
 
     //este
-    const handleFileSelect = async (event) => {
-        const file = event.target.files[0];
-    if (file) {
-        try {
-            const storageRef = ref(storage, `videos/${file.name}`);
-            await uploadBytes(storageRef, file); 
-            const downloadURL = await getDownloadURL(storageRef); 
-            console.log("URL del video:", downloadURL);
-            setVideo(downloadURL); 
-        } catch (error) {
-            console.error("Error al subir el video:", error);
-        }
+    const abrirDialogoArchivo =()=>{
+    
+        Referencia.current.click();
     }
-      };
+
+    const cambioArchivo=(event)=>{
+        const archivo = event.target.files[0];
+        if (!archivo) return;
+    
+        console.log("Archivo seleccionado:", archivo);
+    
+        const nuevaURL = URL.createObjectURL(archivo);
+        setVideoSrc(nuevaURL); // Para la vista previa
+        setVideoURL(archivo); // Si necesitas el archivo para enviarlo
+    }
+
+
+     const videoPrevio = new FormData();
+      videoPrevio.append("videoURL",videoURL);
+
 
       const handleChange = (e) => {
         const { name, value } = e.target;
-        setFormData({
-            ...formData,
-            [name]: value
-        });
-    
-        if (name === "videoURL") {
-            setVideo(value);
-        }
+        setFormData({ ...formData, [name]: value });
     };
+    
     
 
     const handleGuardar = async () => {
         const token = localStorage.getItem("token");
-        const nuevaPublicacion = {
-            ...formData,
-            fechaPublica: formData.fechaPublica ? dayjs(formData.fechaPublica).format("YYYY-MM-DD") : null,
-            fechaCierre: formData.fechaCierre ? dayjs(formData.fechaCierre).format("YYYY-MM-DD") : null,
-            videoURL: video
-        };
+        if (!Referencia.current?.files[0]) {
+            alert("Debes seleccionar un archivo de video.");
+            return;
+        }
+    
+        // Crear un objeto FormData para enviar los datos
+        const formDataToSend = new FormData();
+    
+        // Agregar los campos del formulario
+        formDataToSend.append("titulo", formData.titulo);
+        formDataToSend.append("descripcion", formData.descripcion);
+        formDataToSend.append("area", formData.area);
+        formDataToSend.append("duracion", formData.duracion);
+        formDataToSend.append("fechaPublica", formData.fechaPublica ? dayjs(formData.fechaPublica).format("YYYY-MM-DD") : "");
+        formDataToSend.append("fechaCierre", formData.fechaCierre ? dayjs(formData.fechaCierre).format("YYYY-MM-DD") : "");
+        formDataToSend.append("certificado", formData.certificado);
+        formDataToSend.append("cursoLibre", formData.cursoLibre);
+        formDataToSend.append("evaluacion", formData.evaluacion);
+        formDataToSend.append("obligatorio", formData.obligatorio);
+        
+        // Agregar el video solo si se ha seleccionado uno
+        formDataToSend.append("video", Referencia.current.files[0]);
+
+        console.log("Datos enviados:", {
+            titulo: formData.titulo,
+            descripcion: formData.descripcion,
+            area: formData.area,
+            duracion: formData.duracion,
+            fechaPublica: formData.fechaPublica,
+            fechaCierre: formData.fechaCierre,
+            certificado: formData.certificado,
+            cursoLibre: formData.cursoLibre,
+            evaluacion: formData.evaluacion,
+            obligatorio: formData.obligatorio,
+            videoURL: Referencia.current?.files[0],
+        });
     
         try {
             const response = await fetch("http://localhost:3001/cursos", {
                 method: "POST",
                 headers: {
-                    "Content-Type": "application/json",
-                     "Authorization": `Bearer ${token}`
+                    Authorization: `Bearer ${localStorage.getItem("token")}`
                 },
-                body: JSON.stringify(nuevaPublicacion),
+                body: formDataToSend, // Se envía como FormData
             });
     
             if (!response.ok) {
+                const errorResponse = await response.json(); // Captura la respuesta del servidor
+                console.error("Error del servidor:", errorResponse);
                 throw new Error("Error al guardar el curso");
             }
     
             const data = await response.json();
-            console.log("Curso guardado correctamente a la base:", data);
+            console.log("Curso guardado correctamente:", data);
     
             setPublicaciones([...publicaciones, data]);
     
@@ -96,23 +129,22 @@ const Publicacion = () => {
                 cursoLibre: "",
                 evaluacion: "",
                 obligatorio: "",
-                videoURL:""
             });
     
-            setVideo(null);
+            // Resetear el video
+            
+            setVideoSrc(null);
+            Referencia.current.value = ""; // Limpiar el input de archivo
+    
         } catch (error) {
             console.error("Error al enviar los datos:", error);
         }
     };
     
     
-      const openFileDialog = () => {
-        document.getElementById("videoInput").click();
-      };
-      
-      const youtubeRegex = /(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]+)/;
     
-    const videoId = video ? (video.match(youtubeRegex)?.[1] || "") : "";
+      
+    
 
     const [usuarios, setUsuarios] = useState([]);
 
@@ -194,19 +226,21 @@ const Publicacion = () => {
                         <div style={{ textAlign: "center", marginTop: "20px",width: "100%" }}>
                             <input
                                 type="file"
+                                ref={Referencia}
                                 id="videoInput"
                                 accept="video/*"
                                 style={{ display: "none" }}
-                                onChange={handleFileSelect}
+                                onChange={cambioArchivo}
                             />
-                            {video && (
+                            {videoSrc && (
                                 <div style={{ marginTop: "20px", width: "100%", maxWidth: "600px", margin: "auto" }}>
                                 <p>seleccionado:</p>
                                  <video 
+                                    key={videoSrc}
                                     controls 
                                     style={{ width: "100%", height: "auto", borderRadius: "10px" }}
                                     >
-                                    <source src={video} type="video/mp4" />
+                                    <source src={videoSrc} type="video/mp4" />
                                          Tu navegador no soporta videos.
                                     </video> 
 
@@ -234,7 +268,7 @@ const Publicacion = () => {
                            
                             <div className='box-boton'>
                             <Stack direction="row" spacing={2}>
-                                <Button variant="contained" color="success" onClick={openFileDialog}>Agregar</Button>
+                                <Button variant="contained" color="success" onClick={abrirDialogoArchivo}>Agregar</Button>
                                 <Button variant="contained" onClick={handleGuardar}>Guardar</Button>
                                 <Button variant="contained" color="error">Eliminar</Button>
                             </Stack>

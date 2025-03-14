@@ -6,6 +6,8 @@ const { PrismaClient } = require("@prisma/client");
 const jwt = require("jsonwebtoken");
 const app = express();
 const prisma = new PrismaClient();
+const multer = require("multer");
+const path = require("path");
 
 //middlerware
 const verificarToken = (rolesPermitidos) => {
@@ -37,7 +39,17 @@ const verificarToken = (rolesPermitidos) => {
 };
 
 
+// Configuración de almacenamiento para videos
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "uploads/"); // Guardar archivos en la carpeta "uploads"
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + path.extname(file.originalname)); // Nombre único
+  },
+});
 
+const upload = multer({ storage });
 
 app.use(cors({
   origin: "http://localhost:5173", 
@@ -49,7 +61,7 @@ app.use(express.json());
 
 
 // Obtener usuarios
-app.get("/usuarios",verificarToken(["administrador"]), async (req, res) => {
+app.get("/usuarios",verificarToken(["administrador", "trabajador"]), async (req, res) => {
   try {
     const usuarios = await prisma.usuarios.findMany();
     res.json(usuarios);
@@ -103,64 +115,52 @@ app.get("/cursos", async (req, res) => {
 });
 
 //para guardar los cursos
-app.post("/cursos",verificarToken(["administrador", "trabajador"]), async (req, res) => {
+app.post("/cursos", verificarToken(["administrador", "trabajador"]), upload.single("video"), async (req, res) => {
   try {
+    if (!req.file) {
+      return res.status(400).json({ error: "Debes subir un archivo de video." });
+    }
+
+    const videoURL = `http://localhost:5000/uploads/${req.file.filename}`;
+
     console.log("Usuario autenticado en la ruta /cursos:", req.user);
-    const { titulo, 
-      descripcion, 
-      area,
-      duracion,
-      fechaPublica,
-      fechaCierre,
-      certificado,
-      cursoLibre,
-      evaluacion,
-      obligatorio,
-      videoURL,
-     } = req.body; 
-     const idUsuario = req.user.id;
-    
+    const { titulo, descripcion, area, duracion, fechaPublica, fechaCierre, certificado, cursoLibre, evaluacion, obligatorio } = req.body;
+    const idUsuario = req.user.id;
+
     const nuevoCurso = await prisma.cursos.create({
       data: {
         titulo,
         descripcion,
         area,
         duracion,
-        fechaPublica: fechaPublica ? new Date(fechaPublica) : null, 
+        fechaPublica: fechaPublica ? new Date(fechaPublica) : null,
         fechaCierre: fechaCierre ? new Date(fechaCierre) : null,
         certificado,
         cursoLibre,
         evaluacion,
         obligatorio,
-        videoURL,
-        idUsuario
+        videoURL, 
+        idUsuario,
       },
     });
 
     res.status(201).json(nuevoCurso);
   } catch (error) {
-    console.error("Error al agregar usuario:", error);
+    console.error("Error al agregar curso:", error);
     res.status(500).json({ error: "Error al agregar curso" });
   }
 });
+
+
+//ruta para obtener todos los videos
+
+app.get("/videos",async(req,res)=>{
+
+  const videos=await prisma.cursos.findMany();
+  res.json(videos);
+})
   
-//opcional recibir url youtube
-app.post("/guardar-url-video", async (req, res) => {
-  const { videoURL } = req.body;
 
-  try {
-    const nuevoCurso = await prisma.cursos.create({
-      data: {
-        videoURL: videoURL  // Guardar la URL en MySQL
-      }
-    });
-
-    res.json({ mensaje: "URL guardada", videoURL: nuevoCurso });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Error al guardar la URL" });
-  }
-});
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
