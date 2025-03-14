@@ -147,3 +147,14 @@
     height: 300px;
     
 }
+.div-publicacion{
+    width: 80%;
+    height: 80%;
+    display: flex;
+    flex-direction: column;
+    overflow:auto ;
+}
+.publicaciones-activa{
+    display: flex;
+    color: rgb(255, 255, 255);
+}

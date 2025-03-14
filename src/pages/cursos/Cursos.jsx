@@ -1,12 +1,12 @@
 import './cursos.css'
 import { useEffect, useState } from "react";
-import FormularioVideo from '../publicacion/guardar/Guardar.jsx';
 import Button from '@mui/material/Button';
+import misCursos from '../publicacion/Publicacion';
 
 const Cursos = () => {
-    const [videoData, setVideoData] = useState(null);
     const [cursos, setCursos] = useState([]);
     const [cursosSeleccionados, setCursosSeleccionados] = useState([]);
+    const [misCursos,setMisCursos] =useState([])
 
 
     useEffect(() => {
@@ -32,12 +32,12 @@ const Cursos = () => {
     }, []);
     
     const agregarCurso = (curso) => {
-        console.log("Intentando agregar curso:", curso); // Verificar el curso que se intenta agregar
+        console.log("Intentando agregar curso:", curso); 
     
         if (!cursosSeleccionados.some(c => c.id === curso.id)) {  
             setCursosSeleccionados(prevCursos => {
                 const nuevosCursos = [...prevCursos, curso];
-                console.log("Cursos seleccionados después de agregar:", nuevosCursos); // Verificar estado actualizado
+                console.log("Cursos seleccionados después de agregar:", nuevosCursos); 
                 return nuevosCursos;
             });
         } else {
@@ -45,6 +45,34 @@ const Cursos = () => {
         }
     };
     
+
+     
+       const obtenerPublicacionPorUsuario = async () => {
+              try {
+                const response = await fetch("http://localhost:3001/publicaciones", {
+                  method: "GET",
+                  headers: {
+                   "Authorization": `Bearer ${localStorage.getItem("token")}`,
+                    "Content-Type": "application/json",
+                  },
+                });
+        
+                if (!response.ok) {
+                  throw new Error("Error al obtener los cursos");
+                }
+        
+                const data = await response.json();
+                setMisCursos(data);
+              } catch (error) {
+                console.error("Error:", error);
+              }
+            };
+    
+        useEffect(() => {
+            
+        
+            obtenerPublicacionPorUsuario();
+          }, []);
   
     return (
         <div className='fondo-cursos'>
@@ -108,6 +136,19 @@ const Cursos = () => {
                 </div>
             
             </div>
+            <div className='segundario'>
+                <p className='titulo-cer'>Mis Publicaciones</p>
+                <div className='panel-publicaciones'>
+                {misCursos.map((curso) => {
+                            
+                            return (    
+                            <li className='lista' key={curso.id} >
+                                <ul>{curso.titulo}</ul>
+                            </li>
+                            );
+                     })}  
+                </div>
+            </div>
             <p className='titulo-c'>Cursos Disponibles</p>
             <div>
                 <div className='disponibles' >
@@ -120,18 +161,7 @@ const Cursos = () => {
                         </Button>
                         </div> 
                         <div className='imagen-curso'></div>
-                       
-                       {/* <p>{curso.descripcion}</p>
-                       <p><strong>Área:</strong> {curso.area}</p>
-                       <p><strong>Duración:</strong> {curso.duracion}</p>
-                       <p>
-                           <strong>Fecha de Publicación:</strong> 
-                           {curso.fechaPublica ? new Date(curso.fechaPublica).toLocaleDateString() : "No disponible"}
-                       </p>
-                       <p>
-                           <strong>Fecha de Cierre:</strong> 
-                           {curso.fechaCierre ? new Date(curso.fechaCierre).toLocaleDateString() : "No disponible"}
-                       </p> */}
+                            <p>{curso.videoURL}</p>
                         </div>
 
                     )

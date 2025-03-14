@@ -4,7 +4,7 @@ import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
-import { useState,useRef } from "react";
+import { useState,useRef,useEffect } from "react";
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
@@ -14,7 +14,7 @@ const Publicacion = () => {
     const [videoSrc, setVideoSrc] = useState(null);
     const [videoURL, setVideoURL] = useState(null);
     const Referencia= useRef(null)
-    const [publicaciones, setPublicaciones] = useState([]);
+    const [misCursos,setMisCursos] =useState([])
     const [formData, setFormData] = useState({
         titulo: "",
         descripcion: "",
@@ -42,8 +42,8 @@ const Publicacion = () => {
         console.log("Archivo seleccionado:", archivo);
     
         const nuevaURL = URL.createObjectURL(archivo);
-        setVideoSrc(nuevaURL); // Para la vista previa
-        setVideoURL(archivo); // Si necesitas el archivo para enviarlo
+        setVideoSrc(nuevaURL); 
+        setVideoURL(archivo);
     }
 
 
@@ -59,16 +59,15 @@ const Publicacion = () => {
     
 
     const handleGuardar = async () => {
-        const token = localStorage.getItem("token");
+
         if (!Referencia.current?.files[0]) {
             alert("Debes seleccionar un archivo de video.");
             return;
         }
     
-        // Crear un objeto FormData para enviar los datos
         const formDataToSend = new FormData();
     
-        // Agregar los campos del formulario
+      
         formDataToSend.append("titulo", formData.titulo);
         formDataToSend.append("descripcion", formData.descripcion);
         formDataToSend.append("area", formData.area);
@@ -80,22 +79,9 @@ const Publicacion = () => {
         formDataToSend.append("evaluacion", formData.evaluacion);
         formDataToSend.append("obligatorio", formData.obligatorio);
         
-        // Agregar el video solo si se ha seleccionado uno
+      
         formDataToSend.append("video", Referencia.current.files[0]);
 
-        console.log("Datos enviados:", {
-            titulo: formData.titulo,
-            descripcion: formData.descripcion,
-            area: formData.area,
-            duracion: formData.duracion,
-            fechaPublica: formData.fechaPublica,
-            fechaCierre: formData.fechaCierre,
-            certificado: formData.certificado,
-            cursoLibre: formData.cursoLibre,
-            evaluacion: formData.evaluacion,
-            obligatorio: formData.obligatorio,
-            videoURL: Referencia.current?.files[0],
-        });
     
         try {
             const response = await fetch("http://localhost:3001/cursos", {
@@ -103,11 +89,11 @@ const Publicacion = () => {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem("token")}`
                 },
-                body: formDataToSend, // Se envía como FormData
+                body: formDataToSend,
             });
     
             if (!response.ok) {
-                const errorResponse = await response.json(); // Captura la respuesta del servidor
+                const errorResponse = await response.json(); 
                 console.error("Error del servidor:", errorResponse);
                 throw new Error("Error al guardar el curso");
             }
@@ -115,9 +101,7 @@ const Publicacion = () => {
             const data = await response.json();
             console.log("Curso guardado correctamente:", data);
     
-            setPublicaciones([...publicaciones, data]);
-    
-            // Resetear formulario después de guardar
+            obtenerPublicacionPorUsuario(); 
             setFormData({
                 titulo: "",
                 descripcion: "",
@@ -130,23 +114,45 @@ const Publicacion = () => {
                 evaluacion: "",
                 obligatorio: "",
             });
-    
-            // Resetear el video
             
+
             setVideoSrc(null);
-            Referencia.current.value = ""; // Limpiar el input de archivo
+            Referencia.current.value = ""; 
     
         } catch (error) {
             console.error("Error al enviar los datos:", error);
         }
     };
     
+   const obtenerPublicacionPorUsuario = async () => {
+          try {
+            const response = await fetch("http://localhost:3001/publicaciones", {
+              method: "GET",
+              headers: {
+               "Authorization": `Bearer ${localStorage.getItem("token")}`,
+                "Content-Type": "application/json",
+              },
+            });
     
+            if (!response.ok) {
+              throw new Error("Error al obtener los cursos");
+            }
     
+            const data = await response.json();
+            setMisCursos(data);
+          } catch (error) {
+            console.error("Error:", error);
+          }
+        };
+    //para obtener lista de publicaciones
+
+    useEffect(() => {
+        
+    
+        obtenerPublicacionPorUsuario();
+      }, []);
       
     
-
-    const [usuarios, setUsuarios] = useState([]);
 
     return (
         <div>
@@ -159,6 +165,7 @@ const Publicacion = () => {
                         <div className='conf-sup'>
                             <div className='configuracion'>
                                 <br />
+                                    
                                         <Box sx={{ width: 500, maxWidth: '100%' }}>
                                         <TextField fullWidth label="Titulo" id="Titulo" name='titulo' value={formData.titulo} onChange={handleChange} />
                                         </Box>
@@ -216,6 +223,7 @@ const Publicacion = () => {
                                             <TextField fullWidth label="Obligatorio" id="Obligatorio" name='obligatorio' value={formData.obligatorio} onChange={handleChange}/>
                                         </Box>
                                         
+                                  
                                         
                         </div>
                         
@@ -232,7 +240,7 @@ const Publicacion = () => {
                                 style={{ display: "none" }}
                                 onChange={cambioArchivo}
                             />
-                            {videoSrc && (
+                            {videoSrc && (console.log("url",videoSrc),
                                 <div style={{ marginTop: "20px", width: "100%", maxWidth: "600px", margin: "auto" }}>
                                 <p>seleccionado:</p>
                                  <video 
@@ -277,14 +285,21 @@ const Publicacion = () => {
                     </div>
                     <div className="conteiner-agregar">
                         <p className='text-pregunta' style={{color:'white',fontSize:'20px'}}>Mis Publicaciones activas</p>
-                        { usuarios.map((usuario)=>{
-                            <div key={usuario.id} className='publicaciones'>
-                                <div></div>
 
-                            </div>
-                        }) }
-
+                        <div className='div-publicacion'>
+                          {misCursos.map((curso) => {
+                            
+                                return (    
+                                <li className='publicaciones-activa' key={curso.id} >
+                                    <ul>{curso.titulo}</ul>
+                                </li>
+                                );
+                         })}  
+                        </div>
+                         
+                         
                     </div>
+
                     </div>
                     <div className='contenedor-inferior'>
                         <div className='evaluacion'>

@@ -37,7 +37,7 @@ usuario:[
 function ResponsiveAppBar() {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
-  const [openLoginDialog, setOpenLoginDialog] = React.useState(false); 
+  const [abrirLogin, setabrirLogin] = React.useState(false); 
   const [isAuthenticated, setIsAuthenticated] = React.useState( !!localStorage.getItem("token"));
   //cargo de persona para ocultar rutas
   const cargo = localStorage.getItem("cargo");
@@ -50,12 +50,12 @@ function ResponsiveAppBar() {
     setAnchorElNav(null);
   };
 
-  const handleOpenLoginDialog = () => {
-    setOpenLoginDialog(true); 
+  const abrirDialogoLogin = () => {
+    setabrirLogin(true); 
   };
 
-  const handleCloseLoginDialog = () => {
-    setOpenLoginDialog(false); 
+  const cerrarDialogoLogin = () => {
+    setabrirLogin(false); 
   };
 //funcion para cerrar sesion
   const handleLogout = () => {
@@ -166,7 +166,7 @@ function ResponsiveAppBar() {
             {isAuthenticated ? (
               <Button
                 variant="outlined"
-                sx={{ color: 'white', borderColor: '#2254facc', backgroundColor: '#1046f5cc' }}
+                sx={{ color: 'white', borderColor: '#e93b1dcc', backgroundColor: '#e93b1dcc' }}
                 onClick={handleLogout}
               >
               Cerrar sesión
@@ -175,7 +175,7 @@ function ResponsiveAppBar() {
               <Button
                 variant="outlined"
                 sx={{ color: 'white', borderColor: '#2254facc', backgroundColor: '#1046f5cc' }}
-                onClick={handleOpenLoginDialog}
+                onClick={abrirDialogoLogin}
               >
                 Iniciar sesión
               </Button>
@@ -184,7 +184,7 @@ function ResponsiveAppBar() {
           </Toolbar>
         </Container>
       </AppBar>
-      <Login open={openLoginDialog} onClose={handleCloseLoginDialog} setIsAuthenticated={setIsAuthenticated}  />
+      <Login open={abrirLogin} onClose={cerrarDialogoLogin} setIsAuthenticated={setIsAuthenticated}  />
     </React.Fragment>
   );
 }
