@@ -7,6 +7,9 @@ const Cursos = () => {
     const [cursos, setCursos] = useState([]);
     const [cursosSeleccionados, setCursosSeleccionados] = useState([]);
     const [misCursos,setMisCursos] =useState([])
+    
+
+
 
 
     useEffect(() => {
@@ -152,7 +155,8 @@ const Cursos = () => {
             <p className='titulo-c'>Cursos Disponibles</p>
             <div>
                 <div className='disponibles' >
-                    {cursos.map((curso) =>(
+                    {cursos.map((curso) =>( console.log("URL del video:", curso.videoURL),
+
                        <div key={curso.id} className='clase'>
                        <div className='clase-linea'>
                         <div className='font'>{curso.titulo}</div>
@@ -160,8 +164,19 @@ const Cursos = () => {
                         Agregar
                         </Button>
                         </div> 
-                        <div className='imagen-curso'></div>
-                            <p>{curso.videoURL}</p>
+                        <div className='imagen-curso'>
+                            {curso.videoURL ?(
+                                <video width="300" controls autoPlay muted playsInline>
+                                <source src={`http://localhost:3001/${curso.videoURL}`} type="video/mp4" />
+                                    Tu navegador no soporta el video.
+                                </video>
+                        ):(
+                            <p>Video no disponible</p>
+                        )}
+                        </div>
+                        
+                               
+                                    
                         </div>
 
                     )
