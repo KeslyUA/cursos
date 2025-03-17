@@ -9,6 +9,10 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import dayjs from "dayjs";
+import Fab from '@mui/material/Fab';
+import AddIcon from '@mui/icons-material/Add';
+import { Typography,FormControlLabel } from "@mui/material";
+import Checkbox from '@mui/material/Checkbox';
 
 const Publicacion = () => {
     const [videoSrc, setVideoSrc] = useState(null);
@@ -28,6 +32,9 @@ const Publicacion = () => {
         obligatorio: "",
         setVideoURL:""
     });
+    const [quiz,setQuiz] = useState ({
+        alternativa:""
+    })
 
     //este
     const abrirDialogoArchivo =()=>{
@@ -58,29 +65,29 @@ const Publicacion = () => {
     
     
 
-    const handleGuardar = async () => {
+    const GuardarDatos = async () => {
 
         if (!Referencia.current?.files[0]) {
             alert("Debes seleccionar un archivo de video.");
             return;
         }
     
-        const formDataToSend = new FormData();
+        const enviar = new FormData();
     
       
-        formDataToSend.append("titulo", formData.titulo);
-        formDataToSend.append("descripcion", formData.descripcion);
-        formDataToSend.append("area", formData.area);
-        formDataToSend.append("duracion", formData.duracion);
-        formDataToSend.append("fechaPublica", formData.fechaPublica ? dayjs(formData.fechaPublica).format("YYYY-MM-DD") : "");
-        formDataToSend.append("fechaCierre", formData.fechaCierre ? dayjs(formData.fechaCierre).format("YYYY-MM-DD") : "");
-        formDataToSend.append("certificado", formData.certificado);
-        formDataToSend.append("cursoLibre", formData.cursoLibre);
-        formDataToSend.append("evaluacion", formData.evaluacion);
-        formDataToSend.append("obligatorio", formData.obligatorio);
+        enviar.append("titulo", formData.titulo);
+        enviar.append("descripcion", formData.descripcion);
+        enviar.append("area", formData.area);
+        enviar.append("duracion", formData.duracion);
+        enviar.append("fechaPublica", formData.fechaPublica ? dayjs(formData.fechaPublica).format("YYYY-MM-DD") : "");
+        enviar.append("fechaCierre", formData.fechaCierre ? dayjs(formData.fechaCierre).format("YYYY-MM-DD") : "");
+        enviar.append("certificado", formData.certificado);
+        enviar.append("cursoLibre", formData.cursoLibre);
+        enviar.append("evaluacion", formData.evaluacion);
+        enviar.append("obligatorio", formData.obligatorio);
         
       
-        formDataToSend.append("video", Referencia.current.files[0]);
+        enviar.append("video", Referencia.current.files[0]);
 
     
         try {
@@ -89,7 +96,7 @@ const Publicacion = () => {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem("token")}`
                 },
-                body: formDataToSend,
+                body: enviar,
             });
     
             if (!response.ok) {
@@ -152,7 +159,33 @@ const Publicacion = () => {
         obtenerPublicacionPorUsuario();
       }, []);
       
+
+    const guardarEvaluacion = async () => {
+
+        
+    }
+
     
+    const [alternativas, setAlternativas] = useState([]);
+      
+    const añadirAlternativa = () => {
+        if (alternativas.length < 4) {
+          setAlternativas([...alternativas, { texto: "", seleccionada: false }]);
+        }
+      };
+    
+      const actualizar = (index, event) => {
+        const nuevasAlternativas = [...alternativas];
+        nuevasAlternativas[index].texto = event.target.value;
+        setAlternativas(nuevasAlternativas);
+      };
+    
+      const filaCheckbox = (index) => {
+        const nuevasAlternativas = [...alternativas];
+        nuevasAlternativas[index].seleccionada = !nuevasAlternativas[index].seleccionada;
+        setAlternativas(nuevasAlternativas);
+      };
+
 
     return (
         <div>
@@ -240,7 +273,7 @@ const Publicacion = () => {
                                 style={{ display: "none" }}
                                 onChange={cambioArchivo}
                             />
-                            {videoSrc && (console.log("url",videoSrc),
+                            {videoSrc && (
                                 <div style={{ marginTop: "20px", width: "100%", maxWidth: "600px", margin: "auto" }}>
                                 <p>seleccionado:</p>
                                  <video 
@@ -277,7 +310,7 @@ const Publicacion = () => {
                             <div className='box-boton'>
                             <Stack direction="row" spacing={2}>
                                 <Button variant="contained" color="success" onClick={abrirDialogoArchivo}>Agregar</Button>
-                                <Button variant="contained" onClick={handleGuardar}>Guardar</Button>
+                                <Button variant="contained" onClick={GuardarDatos}>Guardar</Button>
                                 <Button variant="contained" color="error">Eliminar</Button>
                             </Stack>
                             </div>
@@ -311,16 +344,55 @@ const Publicacion = () => {
                             <div className='pregunta'>
                                 <p className='text-pregunta'>Pregunta N° 1</p>
                                 <div className='alternativas'>
-                                    <TextField id="standard-basic" label="Titulo" variant="standard" />
+                                    <TextField id="filled-basic"  label="Titulo" variant="filled" name='pregunta'/>
                                     <br />
                                     <br />
-                                    <TextField id="standard-basic" label="Alternativa 1" variant="standard" />
-                                    <TextField id="standard-basic" label="Alternativa 2" variant="standard" />
-                                    <TextField id="standard-basic" label="Alternativa 3" variant="standard" />
-                                    <TextField id="standard-basic" label="Alternativa 4" variant="standard" />    
-                                </div>
-                               
-
+                                    <div className='agregar'>
+                                        
+                                        <div>
+                                           <Fab size="medium" className='alternativa' name='alternativa' color="primary" aria-label="add" onClick={añadirAlternativa} disabled={alternativas.length >= 4}>
+                                            <AddIcon />
+                                            </Fab> 
+                                        </div>
+                                        <div>
+                                        {alternativas.length >= 4 && (
+                                            <Typography color="error" variant="body2">
+                                            Límite de alternativas alcanzado
+                                            </Typography>
+                                        )}
+                                        
+                                            {alternativas.map((alt, index) => (
+                                                <div key={index} style={{ display: "flex", alignItems: "center", marginTop: "10px" }}>
+                                        <TextField
+                                                label={`Alternativa ${index + 1}`}
+                                                value={quiz.alternativa}
+                                                onChange={(event) => actualizar(index, event)}
+                                                variant="filled"
+                                                fullWidth
+                                            />
+                                            <FormControlLabel
+                                                control={
+                                                <Checkbox
+                                                    checked={alt.seleccionada}
+                                                    onChange={() => filaCheckbox(index)}
+                                                />
+                                                }
+                                                label=""
+                                            />
+                                        </div>
+                                        
+                                    ))}
+                                    <div >
+                                         <Button variant="outlined" size="medium" onClick={guardarEvaluacion}>
+                                         Guardar
+                                        </Button>
+                                    </div>
+                                   
+                                        </div>
+                                    
+                                    </div>
+                                    
+                                     </div>
                             </div>
                             
                         </div>

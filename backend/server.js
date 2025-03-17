@@ -142,6 +142,7 @@ app.get("/cursos", async (req, res) => {
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
 //para guardar los cursos
 app.post("/cursos", verificarToken(["administrador", "trabajador"]), upload.single("video"), async (req, res) => {
   try {
@@ -151,7 +152,16 @@ app.post("/cursos", verificarToken(["administrador", "trabajador"]), upload.sing
 
     const videoURL = `http://localhost:3001/uploads/${req.file.filename}`;
 
-    const { titulo, descripcion, area, duracion, fechaPublica, fechaCierre, certificado, cursoLibre, evaluacion, obligatorio } = req.body;
+    const { titulo, 
+      descripcion,
+      area,
+      duracion,
+      fechaPublica,
+      fechaCierre,
+      certificado,
+      cursoLibre,
+      evaluacion,
+      obligatorio } = req.body;
     const idUsuario = req.user.id;
 
     const nuevoCurso = await prisma.cursos.create({
@@ -213,7 +223,21 @@ app.get("/publicaciones", verificarToken(["administrador", "trabajador"]), async
   }
 });
 
+//para guardar evaluaciones
+app.post("/evaluaciones", verificarToken(["administrador"]),async(req,res) =>{
+  try{
+    const titulo=req.body;
+    const id_usuario=req.user.id;
+    const id_curso=req.user.id;//como relaciono el id del curso 
+    const nuevaevaluacion=await prisma.evaluacion.create({
+      data:{titulo,id_usuario,id_curso}
+    })
+    res.status(201).json(nuevaevaluacion);
 
+  }catch{
+    res.status(500).json({ error: "Error al agregar evaluacion" });
+  }
+})
 
 
 const PORT = process.env.PORT || 3001;
