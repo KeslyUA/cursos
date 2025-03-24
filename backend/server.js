@@ -1,55 +1,18 @@
 
-require("dotenv").config();
-const express = require("express");
-const cors = require("cors");
-const { PrismaClient } = require("@prisma/client");
-const jwt = require("jsonwebtoken");
+import dotenv from "dotenv";
+import express from "express";
+import cors from "cors";
+import { PrismaClient } from "@prisma/client";
+import jwt from "jsonwebtoken";
+import multer from "multer";
+import path from "path";
+import { fileURLToPath } from "url";
+import { dirname } from "path";
+import axios from "axios";
+
+dotenv.config();
 const app = express();
 const prisma = new PrismaClient();
-const multer = require("multer");
-const path = require("path");
-
-//middlerware
-const verificarToken = (rolesPermitidos) => {
-  return (req, res, next) => {
-    
-    const authHeader = req.headers["authorization"];
-    if (!authHeader) {
-      return res.status(403).json({ error: "Acceso denegado. No hay token." });
-    }
-
-    const token = authHeader.split(" ")[1]; 
-    if (!token) {
-      return res.status(403).json({ error: "Acceso denegado. Token inválido." });
-    }
-
-    try {
-      const decoded = jwt.verify(token, process.env.JWT_SECRET || "secreto_super_seguro");
-
-      if (!rolesPermitidos.includes(decoded.cargo)) {
-        return res.status(403).json({ error: "Acceso denegado. No tienes permisos." });
-      }
-
-      req.user = decoded; 
-      next();
-    } catch (error) {
-      return res.status(401).json({ error: "Token inválido o expirado." });
-    }
-  };
-};
-
-
-// Configuración de almacenamiento para videos
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "uploads/"); // Guardar archivos en la carpeta "uploads"
-  },
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + path.extname(file.originalname)); // Nombre único
-  },
-});
-
-const upload = multer({ storage });
 
 app.use(cors({
   origin: "http://localhost:5173", 
@@ -58,6 +21,69 @@ app.use(cors({
   credentials: true,
 }));
 app.use(express.json());
+
+//este es para enviar mensaje cuando expire la sesion
+const api = axios.create({
+  baseURL: "http://localhost:3001", 
+});
+
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response && error.response.status === 401) {
+      alert("Tu sesión ha expirado. Por favor, inicia sesión nuevamente.");
+      localStorage.removeItem("token"); 
+      window.location.href = "/login"; 
+    }
+    return Promise.reject(error);
+  }
+);
+
+export default api;
+
+//middlerware
+const verificarToken = (rolesPermitidos) => (req, res, next) => {
+  const authHeader = req.headers["authorization"];
+  console.log("Encabezado Authorization recibido:", authHeader);
+
+  if (!authHeader) {
+    return res.status(403).json({ error: "Acceso denegado, token requerido" });
+  }
+
+  const token = authHeader.split(" ")[1]; 
+
+  if (!token) {
+    return res.status(403).json({ error: "Acceso denegado, token no válido" });
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || "secreto_super_seguro");
+
+    if (!rolesPermitidos.includes(decoded.cargo)) {
+      return res.status(403).json({ error: "Acceso denegado, rol no autorizado" });
+    }
+    req.user = decoded; 
+
+    next();
+  } catch (error) {
+    console.error("Error al verificar el token:", error);
+    return res.status(401).json({ error: "Token inválido o expirado." });
+  }
+};
+
+
+// Configuración de almacenamiento para videos
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "uploads/"); 
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + path.extname(file.originalname)); 
+  },
+});
+
+const upload = multer({ storage });
+
 
 
 // Obtener usuarios
@@ -79,12 +105,10 @@ app.post("/login", async (req, res) => {
   const { usuario, contraseña } = req.body;
 
   try {
-    console.log("Buscando usuario en la base de datos...");
     const user = await prisma.usuarios.findFirst({
       where: { usuario:usuario },
     });
 
-    console.log("Usuario encontrado:", user);
 
     if (!user || user.contraseña !== contraseña) {
       console.log("Usuario o contraseña incorrectos");
@@ -94,7 +118,7 @@ app.post("/login", async (req, res) => {
     const token = jwt.sign(
       { id:user.id, usuario: user.usuario, cargo: user.cargo },
       process.env.JWT_SECRET || "secreto_super_seguro",
-      { expiresIn: "2h" }
+      { expiresIn: "10h" }
     );
 
     res.json({ message: "Inicio de sesión exitoso", token });
@@ -114,6 +138,11 @@ app.get("/cursos", async (req, res) => {
   }
 });
 
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
 //para guardar los cursos
 app.post("/cursos", verificarToken(["administrador", "trabajador"]), upload.single("video"), async (req, res) => {
   try {
@@ -121,10 +150,18 @@ app.post("/cursos", verificarToken(["administrador", "trabajador"]), upload.sing
       return res.status(400).json({ error: "Debes subir un archivo de video." });
     }
 
-    const videoURL = `http://localhost:5000/uploads/${req.file.filename}`;
+    const videoURL = `http://localhost:3001/uploads/${req.file.filename}`;
 
-    console.log("Usuario autenticado en la ruta /cursos:", req.user);
-    const { titulo, descripcion, area, duracion, fechaPublica, fechaCierre, certificado, cursoLibre, evaluacion, obligatorio } = req.body;
+    const { titulo, 
+      descripcion,
+      area,
+      duracion,
+      fechaPublica,
+      fechaCierre,
+      certificado,
+      cursoLibre,
+      evaluacion,
+      obligatorio } = req.body;
     const idUsuario = req.user.id;
 
     const nuevoCurso = await prisma.cursos.create({
@@ -160,6 +197,57 @@ app.get("/videos",async(req,res)=>{
   res.json(videos);
 })
   
+//para filtrar cursos por usuario
+app.get("/publicaciones", verificarToken(["administrador", "trabajador"]), async (req, res) => {
+  try {
+
+    if (!req.user || !req.user.id) {
+      console.error("Error: req.user no tiene una propiedad 'id'");
+      return res.status(400).json({ error: "ID de usuario no encontrado en el token" });
+    }
+
+    const idUsuario = req.user.id;
+
+    const cursos = await prisma.cursos.findMany({
+      where: { idUsuario: idUsuario },
+    });
+
+    if (cursos.length === 0) {
+      return res.status(404).json({ message: "No hay cursos para este usuario" });
+    }
+
+    res.json(cursos);
+  } catch (error) {
+    console.error("Error al obtener los cursos del usuario:", error);
+    res.status(500).json({ error: "Error en el servidor" });
+  }
+});
+
+//para guardar evaluaciones
+app.post("/evaluaciones",async(req,res) =>{
+  try{
+    const{titulo,idCurso} =req.body;
+    const id_usuario = req.user.id;
+    const nuevaevaluacion=await prisma.evaluacion.create({
+      data:{titulo,id_usuario,idCurso}
+    })
+    res.status(201).json(nuevaevaluacion);
+
+  }catch{
+    res.status(500).json({ error: "Error al agregar evaluacion" });
+  }
+})
+
+//obtener participantes
+app.get("/participantes", async (req, res) => {
+  try {
+    const participantes = await prisma.usuarios.findMany();
+    res.json(participantes); 
+  } catch (error) {
+  console.error("Error en la consulta de cursos:", error); 
+  res.status(500).json({ error: error.message }); 
+  }
+});
 
 
 const PORT = process.env.PORT || 3001;

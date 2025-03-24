@@ -22,3 +22,20 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+  
+# Ignorar archivos de video 
+*.mp4 
+*.avi 
+*.mov 
+*.mkv 
+*.flv 
+*.webm
+  
+# Ignorar archivos de video 
+*.mp4 
+*.avi 
+*.mov 
+*.mkv 
+*.flv 
+*.webm
+  

@@ -6,6 +6,7 @@ import Novedades from '../novedades/Novedades';
 import Explorar from '../explorar/Explorar';
 import Cursos from '../cursos/Cursos';
 import Publicacion from '../publicacion/Publicacion';
+import Evaluacion from '../evaluacion/Evaluacion';
 /* import RutaProtegida from './RutaProgida'; */
 const RutaProtegida = ({ children, rolesPermitidos }) => {
   const token = localStorage.getItem("token");
@@ -43,6 +44,12 @@ const saludo =()=>{
       <Route path="/Publicacion" element={<RutaProtegida rolesPermitidos={["administrador"]}>
               <Publicacion />
             </RutaProtegida>}> 
+      </Route>
+      <Route path='/Evaluacion' element={
+        <RutaProtegida rolesPermitidos={["administrador"]}>
+          <Evaluacion></Evaluacion>
+
+      </RutaProtegida>}>
       </Route> 
       
     </Routes>

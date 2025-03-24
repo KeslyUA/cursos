@@ -4,17 +4,27 @@ import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
-import { useState,useRef } from "react";
+import { useState,useRef,useEffect } from "react";
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import dayjs from "dayjs";
+import Fab from '@mui/material/Fab';
+import AddIcon from '@mui/icons-material/Add';
+import { Typography,FormControlLabel } from "@mui/material";
+import Checkbox from '@mui/material/Checkbox';
+import AgregarParticipantes from '../dialogo/agregarParticipantes/AgregarParticipates';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 
 const Publicacion = () => {
     const [videoSrc, setVideoSrc] = useState(null);
     const [videoURL, setVideoURL] = useState(null);
-    const Referencia= useRef(null)
-    const [publicaciones, setPublicaciones] = useState([]);
+    const Referencia= useRef(null);
+    const [misCursos,setMisCursos] =useState([]);
+    const [abrirDialogo, setabrirDialogo] = React.useState(false);
+    const [participantesSeleccionados, setParticipantesSeleccionados] = useState([]);
+    const [alternativas, setAlternativas] = useState([]);
+    const [mostrarDiv,setMostrardiv] = useState([]);
     const [formData, setFormData] = useState({
         titulo: "",
         descripcion: "",
@@ -28,7 +38,17 @@ const Publicacion = () => {
         obligatorio: "",
         setVideoURL:""
     });
+    const [quiz,setQuiz] = useState ({
+        titulo:"",
+        alternativa:[],
+    });
+    const abrirDialogoParticipantes = () => {
+        setabrirDialogo(true); 
+      };
 
+      const cerrarDialogo = () => {
+        setabrirDialogo(false); 
+      };
     //este
     const abrirDialogoArchivo =()=>{
     
@@ -42,8 +62,8 @@ const Publicacion = () => {
         console.log("Archivo seleccionado:", archivo);
     
         const nuevaURL = URL.createObjectURL(archivo);
-        setVideoSrc(nuevaURL); // Para la vista previa
-        setVideoURL(archivo); // Si necesitas el archivo para enviarlo
+        setVideoSrc(nuevaURL); 
+        setVideoURL(archivo);
     }
 
 
@@ -54,48 +74,34 @@ const Publicacion = () => {
       const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
+       
     };
     
-    
+    const [cursoId,setCursoId] = useState(null);
+    const GuardarDatos = async () => {
 
-    const handleGuardar = async () => {
-        const token = localStorage.getItem("token");
         if (!Referencia.current?.files[0]) {
             alert("Debes seleccionar un archivo de video.");
             return;
         }
     
-        // Crear un objeto FormData para enviar los datos
-        const formDataToSend = new FormData();
+        const enviar = new FormData();
     
-        // Agregar los campos del formulario
-        formDataToSend.append("titulo", formData.titulo);
-        formDataToSend.append("descripcion", formData.descripcion);
-        formDataToSend.append("area", formData.area);
-        formDataToSend.append("duracion", formData.duracion);
-        formDataToSend.append("fechaPublica", formData.fechaPublica ? dayjs(formData.fechaPublica).format("YYYY-MM-DD") : "");
-        formDataToSend.append("fechaCierre", formData.fechaCierre ? dayjs(formData.fechaCierre).format("YYYY-MM-DD") : "");
-        formDataToSend.append("certificado", formData.certificado);
-        formDataToSend.append("cursoLibre", formData.cursoLibre);
-        formDataToSend.append("evaluacion", formData.evaluacion);
-        formDataToSend.append("obligatorio", formData.obligatorio);
+      
+        enviar.append("titulo", formData.titulo);
+        enviar.append("descripcion", formData.descripcion);
+        enviar.append("area", formData.area);
+        enviar.append("duracion", formData.duracion);
+        enviar.append("fechaPublica", formData.fechaPublica ? dayjs(formData.fechaPublica).format("YYYY-MM-DD") : "");
+        enviar.append("fechaCierre", formData.fechaCierre ? dayjs(formData.fechaCierre).format("YYYY-MM-DD") : "");
+        enviar.append("certificado", formData.certificado);
+        enviar.append("cursoLibre", formData.cursoLibre);
+        enviar.append("evaluacion", formData.evaluacion);
+        enviar.append("obligatorio", formData.obligatorio);
         
-        // Agregar el video solo si se ha seleccionado uno
-        formDataToSend.append("video", Referencia.current.files[0]);
+      
+        enviar.append("video", Referencia.current.files[0]);
 
-        console.log("Datos enviados:", {
-            titulo: formData.titulo,
-            descripcion: formData.descripcion,
-            area: formData.area,
-            duracion: formData.duracion,
-            fechaPublica: formData.fechaPublica,
-            fechaCierre: formData.fechaCierre,
-            certificado: formData.certificado,
-            cursoLibre: formData.cursoLibre,
-            evaluacion: formData.evaluacion,
-            obligatorio: formData.obligatorio,
-            videoURL: Referencia.current?.files[0],
-        });
     
         try {
             const response = await fetch("http://localhost:3001/cursos", {
@@ -103,21 +109,19 @@ const Publicacion = () => {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem("token")}`
                 },
-                body: formDataToSend, // Se envía como FormData
+                body: enviar,
             });
     
             if (!response.ok) {
-                const errorResponse = await response.json(); // Captura la respuesta del servidor
-                console.error("Error del servidor:", errorResponse);
+                const errorResponse = await response.json(); 
                 throw new Error("Error al guardar el curso");
             }
     
             const data = await response.json();
             console.log("Curso guardado correctamente:", data);
+            setCursoId(data.id);
     
-            setPublicaciones([...publicaciones, data]);
-    
-            // Resetear formulario después de guardar
+            obtenerPublicacionPorUsuario(); 
             setFormData({
                 titulo: "",
                 descripcion: "",
@@ -130,23 +134,101 @@ const Publicacion = () => {
                 evaluacion: "",
                 obligatorio: "",
             });
-    
-            // Resetear el video
             
+
             setVideoSrc(null);
-            Referencia.current.value = ""; // Limpiar el input de archivo
+            Referencia.current.value = ""; 
     
         } catch (error) {
             console.error("Error al enviar los datos:", error);
         }
     };
-    
-    
-    
+    //guardar de las preguntas
+    const guardarEvaluacion = async () => {
+        const evaluacionData = {
+          titulo: quiz.titulo,
+          alternativas: alternativas.map((alt) => ({
+            texto: alt.texto,
+            correcta: alt.seleccionada,
+          })),
+        };
       
+        try {
+          const response = await fetch("http://localhost:3001/evaluaciones", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(evaluacionData),
+          });
+      
+          if (response.ok) {
+            alert("Evaluación guardada con éxito");
+            setQuiz({ titulo: "", alternativas: [] });
+            setAlternativas([]);
+          }
+        } catch (error) {
+          console.error("Error al guardar la evaluación:", error);
+        }
+      };
     
+   const obtenerPublicacionPorUsuario = async () => {
+          try {
+            const response = await fetch("http://localhost:3001/publicaciones", {
+              method: "GET",
+              headers: {
+               "Authorization": `Bearer ${localStorage.getItem("token")}`,
+                "Content-Type": "application/json",
+              },
+            });
+    
+            if (!response.ok) {
+              throw new Error("Error al obtener los cursos");
+            }
+    
+            const data = await response.json();
+            setMisCursos(data);
+          } catch (error) {
+            console.error("Error:", error);
+          }
+        };
 
-    const [usuarios, setUsuarios] = useState([]);
+    //para obtener lista de publicaciones
+
+    useEffect(() => {
+        
+    
+        obtenerPublicacionPorUsuario();
+       
+      }, []);
+      
+
+      
+    const añadirAlternativa = () => {
+        if (alternativas.length < 4) {
+          setAlternativas([...alternativas, { texto: "", seleccionada: false }]);
+        }
+      };
+    
+      const actualizaralternativa = (index, event) => {
+        const nuevasAlternativas = [...alternativas];
+        nuevasAlternativas[index].texto = event.target.value;
+        setAlternativas(nuevasAlternativas);
+      };
+    
+      const filaCheckbox = (index) => {
+        const nuevasAlternativas = [...alternativas];
+        nuevasAlternativas[index].seleccionada = !nuevasAlternativas[index].seleccionada;
+        setAlternativas(nuevasAlternativas);
+      };
+
+      const funcionchance = (event)=>{
+        setQuiz({ ...quiz, [event.target.name]: event.target.value });
+
+      };
+
+      const eliminarItem = (id) => {
+        setParticipantesSeleccionados(participantesSeleccionados.filter(item => item.id !== id));
+      };
+
 
     return (
         <div>
@@ -159,17 +241,18 @@ const Publicacion = () => {
                         <div className='conf-sup'>
                             <div className='configuracion'>
                                 <br />
+                                    
                                         <Box sx={{ width: 500, maxWidth: '100%' }}>
-                                        <TextField fullWidth label="Titulo" id="Titulo" name='titulo' value={formData.titulo} onChange={handleChange} />
+                                        <TextField fullWidth label="Titulo" id="Titulo" className='itemcolor' name='titulo' value={formData.titulo} onChange={handleChange} />
                                         </Box>
                                         <Box sx={{ width: 500, maxWidth: '100%' }}>
-                                            <TextField fullWidth label="Descripcion" id="Descripcion" name='descripcion' value={formData.descripcion} onChange={handleChange} />
+                                            <TextField fullWidth label="Descripcion" id="Descripcion" className='itemcolor' name='descripcion' value={formData.descripcion} onChange={handleChange} />
                                         </Box>
                                         <Box sx={{ width: 500, maxWidth: '100%' }}>
-                                            <TextField fullWidth label="Area" id="Area" name='area' value={formData.area} onChange={handleChange}/>
+                                            <TextField fullWidth label="Area" id="Area" className='itemcolor' name='area' value={formData.area} onChange={handleChange}/>
                                         </Box>
                                         <Box sx={{ width: 500, maxWidth: '100%' }}>
-                                            <TextField fullWidth label="Duracion" id="Duracion" name='duracion' value={formData.duracion} onChange={handleChange} />
+                                            <TextField fullWidth label="Duracion" id="Duracion" className='itemcolor'  name='duracion' value={formData.duracion} onChange={handleChange} />
                                         </Box>
                                             </div>
                                         
@@ -178,6 +261,7 @@ const Publicacion = () => {
                                         <LocalizationProvider dateAdapter={AdapterDayjs}>
                                             <DatePicker
                                                 label="Fecha Publica"
+                                                className='itemcolor' 
                                                 value={formData.fechaPublica ? dayjs(formData.fechaPublica) : null}
                                                 onChange={(newValue) =>
                                                 setFormData({
@@ -185,13 +269,14 @@ const Publicacion = () => {
                                                     fechaPublica: newValue ? newValue.format("YYYY-MM-DD") : ""
                                                 })
                                                 }
-                                                sx={{ width: 500, maxWidth: '40%' }}
+                                                sx={{ width: 500, maxWidth: '45%' }}
                                                 renderInput={(params) => <TextField {...params} fullWidth />}
                                             />
                                         </LocalizationProvider>
                                         <LocalizationProvider dateAdapter={AdapterDayjs}>
                                             <DatePicker
                                                 label="Fecha Cierre"
+                                                className='itemcolor' 
                                                 value={formData.fechaCierre ? dayjs(formData.fechaCierre) : null}
                                                 onChange={(newValue) =>
                                                 setFormData({
@@ -199,23 +284,24 @@ const Publicacion = () => {
                                                     fechaCierre: newValue ? newValue.format("YYYY-MM-DD") : ""
                                                 })
                                                 }
-                                                sx={{ width: 500, maxWidth: '40%' }}
+                                                sx={{ width: 500, maxWidth: '45%' }}
                                                 renderInput={(params) => <TextField {...params} fullWidth />}
                                             />
                                         </LocalizationProvider>
                                         <Box sx={{ width: 500, maxWidth: '30%' }}>
-                                            <TextField fullWidth label="Certificado" id="Certificado" name='certificado' value={formData.certificado} onChange={handleChange}/>
+                                            <TextField fullWidth label="Certificado" id="Certificado" className='itemcolor'  name='certificado' value={formData.certificado} onChange={handleChange}/>
                                         </Box>
                                         <Box sx={{ width: 500, maxWidth: '30%' }}>
-                                            <TextField fullWidth label="Curso Libre" id="CursoLibre" name='cursoLibre' value={formData.cursoLibre} onChange={handleChange}/>
+                                            <TextField fullWidth label="Curso Libre" id="CursoLibre" className='itemcolor'  name='cursoLibre' value={formData.cursoLibre} onChange={handleChange}/>
                                         </Box>
                                         <Box sx={{ width: 500, maxWidth: '30%' }}>
-                                            <TextField fullWidth label="Evaluacion" id="Evaluacion" name='evaluacion' value={formData.evaluacion} onChange={handleChange} />
+                                            <TextField fullWidth label="Evaluacion" id="Evaluacion" className='itemcolor'  name='evaluacion' value={formData.evaluacion} onChange={handleChange} />
                                         </Box>
                                         <Box sx={{ width: 500, maxWidth: '30%' }}>
-                                            <TextField fullWidth label="Obligatorio" id="Obligatorio" name='obligatorio' value={formData.obligatorio} onChange={handleChange}/>
+                                            <TextField fullWidth label="Obligatorio" id="Obligatorio" className='itemcolor'  name='obligatorio' value={formData.obligatorio} onChange={handleChange}/>
                                         </Box>
                                         
+                                  
                                         
                         </div>
                         
@@ -243,33 +329,14 @@ const Publicacion = () => {
                                     <source src={videoSrc} type="video/mp4" />
                                          Tu navegador no soporta videos.
                                     </video> 
-
-
-                                    {/* <iframe
-                                        width="100%"
-                                        height="315"
-                                        src={`https://www.youtube.com/embed/${videoId}`}
-                                        title="YouTube Video"
-                                        frameBorder="0"
-                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                        allowFullScreen
-                                        style={{ borderRadius: "10px" }}
-                                    ></iframe> */}
                                 </div>
                             )}
                             </div>
                             </div>
-                           {/*  <div className='url'>
-                                 <Box sx={{ width: '100%', maxWidth: '100%' }}>
-                                            <TextField fullWidth label="url del video" id="videoURL" name='videoURL' value={formData.videoURL} onChange={handleChange}/>
-                                </Box>
-                            </div> */}
-                            
-                           
                             <div className='box-boton'>
                             <Stack direction="row" spacing={2}>
                                 <Button variant="contained" color="success" onClick={abrirDialogoArchivo}>Agregar</Button>
-                                <Button variant="contained" onClick={handleGuardar}>Guardar</Button>
+                                <Button variant="contained" onClick={GuardarDatos}>Guardar</Button>
                                 <Button variant="contained" color="error">Eliminar</Button>
                             </Stack>
                             </div>
@@ -277,14 +344,21 @@ const Publicacion = () => {
                     </div>
                     <div className="conteiner-agregar">
                         <p className='text-pregunta' style={{color:'white',fontSize:'20px'}}>Mis Publicaciones activas</p>
-                        { usuarios.map((usuario)=>{
-                            <div key={usuario.id} className='publicaciones'>
-                                <div></div>
 
-                            </div>
-                        }) }
-
+                        <div className='div-publicacion'>
+                          {misCursos.map((curso) => {
+                            
+                                return (    
+                                <li className='publicaciones-activa' key={curso.id} >
+                                    <ul>{curso.titulo}</ul>
+                                </li>
+                                );
+                         })}  
+                        </div>
+                         
+                         
                     </div>
+
                     </div>
                     <div className='contenedor-inferior'>
                         <div className='evaluacion'>
@@ -296,27 +370,85 @@ const Publicacion = () => {
                             <div className='pregunta'>
                                 <p className='text-pregunta'>Pregunta N° 1</p>
                                 <div className='alternativas'>
-                                    <TextField id="standard-basic" label="Titulo" variant="standard" />
+                                    <TextField id="filled-basic"  label="Titulo" variant="filled" name='titulo' value={quiz.titulo} onChange={funcionchance}/>
                                     <br />
                                     <br />
-                                    <TextField id="standard-basic" label="Alternativa 1" variant="standard" />
-                                    <TextField id="standard-basic" label="Alternativa 2" variant="standard" />
-                                    <TextField id="standard-basic" label="Alternativa 3" variant="standard" />
-                                    <TextField id="standard-basic" label="Alternativa 4" variant="standard" />    
-                                </div>
-                               
-
+                                    <div className='agregar'>
+                                        
+                                        <div>
+                                           <Fab size="medium" className='alternativa' name='alternativa' color="primary" aria-label="add" onClick={añadirAlternativa} disabled={alternativas.length >= 4}>
+                                            <AddIcon />
+                                            </Fab> 
+                                        </div>
+                                        <div>
+                                            <div className='deslizar'>
+                                                            {alternativas.length >= 4 && (
+                                                        <Typography color="error" variant="body2">
+                                                        Límite de alternativas alcanzado
+                                                        </Typography>
+                                                    )}
+                                                    
+                                                        {alternativas.map((alt, index) => (
+                                                            <div key={index} className='itemalternativa'>
+                                                    <TextField
+                                                            label={`Alternativa ${index + 1}`}
+                                                            value={alternativas[index].texto}
+                                                            onChange={(event) => actualizaralternativa(index, event)}
+                                                            variant="filled"
+                                                            fullWidth
+                                                        />
+                                                        <FormControlLabel
+                                                            control={
+                                                            <Checkbox
+                                                                name='respuesta'
+                                                                checked={alt.seleccionada}
+                                                                value={quiz.respuesta}
+                                                                onChange={() => filaCheckbox(index)}
+                                                            />
+                                                            }
+                                                            label=""
+                                                        />
+                                                    </div>
+                                                    
+                                                ))}
+                                            </div>
+                                        
+                                    <div >
+                                         <Button variant="outlined" size="medium" onClick={guardarEvaluacion}>
+                                         Guardar
+                                        </Button>
+                                    </div>
+                                   
+                                        </div>
+                                    
+                                    </div>
+                                    
+                                     </div>
                             </div>
                             
                         </div>
                         <div className='participantes'>
-                            <p className='text-pregunta'>Participantes</p>
+                               <p className='text-pregunta'>Participantes</p>
+                               <div className='boton-par'>
+                                <Button variant="outlined" size="small" className='agregar-boton' onClick={abrirDialogoParticipantes}>
+                                agregar
+                                </Button>
+                               </div>
+                               <div className='base-lista'>
+                                 {participantesSeleccionados.map((p,item) => (
+                                    
+                                    <div key={p.id} className='par-agregado'><p className='nombre-usuario'>{p.usuario}</p><DeleteForeverIcon onClick={() => eliminarItem(item.id)} /></div>
+                                ))}
+                               </div>
+                              
+                                 
+                           
                         </div>
                     </div>
                     
                 </div>
-                
+                <AgregarParticipantes open={abrirDialogo} onClose={cerrarDialogo} onSeleccionarParticipantes={setParticipantesSeleccionados}  />
             
         </div>
     )}
-export default Publicacion    
+export default Publicacion 

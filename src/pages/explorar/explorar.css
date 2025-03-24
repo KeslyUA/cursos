@@ -3,10 +3,8 @@
     width: 100%;
     height: 100%;
     place-items: center;
-    overflow-x: scroll;
     flex-direction: column;
     display: flex;
-    overflow-y: auto;
     gap:1vh;
 }
 .contenedor-uno{
