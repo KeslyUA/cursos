@@ -125,10 +125,13 @@ function ResponsiveAppBar() {
                 sx={{ display: { xs: 'block', md: 'none' } }}
               >
                 {pages.map((page) => (
-                  <MenuItem key={page} onClick={handleCloseNavMenu}>
-                    <NavLink to="/" end>
+                  <MenuItem key={page[1]} onClick={() =>{
+                    navigate(`/${page[1]}`);
+                    handleCloseNavMenu(); 
+                  }}>
+                    
                       <Typography sx={{ textAlign: 'center' }}>{page[0]}</Typography>
-                    </NavLink>
+                    
                   </MenuItem>
                 ))}
               </Menu>

@@ -31,7 +31,8 @@ model cursos {
   obligatorio  String?   @db.VarChar(50)
   videoURL      String?
   idUsuario     Int  
-  usuario      usuarios  @relation(fields: [idUsuario], references: [id]) 
+  usuario     Usuario @relation(fields: [idUsuario], references: [id], onDelete: Cascade)
+
 }
 
 model Evaluacion {
