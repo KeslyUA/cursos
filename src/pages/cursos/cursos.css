@@ -1,0 +1,270 @@
+.fondo-cursos{
+    background-color: #6a80fc;
+    height: 100%;
+    width:100% ;
+    place-items: center;
+    display: flex;
+    flex-direction: column;
+    
+}
+.principal{
+    display: flex;
+    height: 80vh;
+    width: 90%;
+    gap: 35px;
+    justify-content: center;
+}
+.contenedor{
+    height: 90%;
+    width: 75%;
+    background-color: #ffffff;
+    margin-top: 10vh;
+    border-radius: 10px;
+    overflow-y: auto;
+    display: flex;
+    place-items: center;
+    place-content: center;
+    background: rgba(0, 0, 0, 0.2);
+}
+.fondo{
+    width:  90%;
+    height: 100%;
+    display: flex;
+    gap: 5px;
+    place-items: center;
+}
+.certificaciones{
+    background-color: #ffffff;
+height: 90%;
+width: 20%;
+margin-top: 10vh;
+border-radius: 10px;
+display: flex;
+flex-direction: column;
+gap: 10px;
+place-items: center;
+}
+.item-certi{
+    background-color: #979393;
+height: 15%;
+width: 80%;
+}
+.disponibles{
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    column-gap: 50px;
+    flex-wrap: wrap;
+    margin-top: 20px;
+    overflow-y: auto;
+    max-height: 1000px;
+}
+.clase{
+    width: 350px;
+    height: 270px;
+    margin-bottom: 50px;
+    flex-direction: column;
+    place-items: center;
+    border-radius: 20px;
+    background-color: rgba(18, 20, 20, 0.726);
+}
+.clase-linea{
+    display: flex;
+    gap: 13px;
+    margin-top: 23px;
+    width: 80%;
+    height: 15%;
+}
+.font{
+    font-family: "Roboto", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+    font-variation-settings:
+      "wdth" 100;
+      color: rgb(255, 255, 255);
+      width: 100%;
+
+}
+.imagen-curso{
+    height: 18vh;
+    width: 85%;
+    margin-top: 10px;
+    place-items: center;
+}
+.imagen{
+    background-image: url(../../img/imagen-muestra.jpg);
+    width: 90%;
+    height: 70%;
+    border-radius:15px ;
+    margin-top: 15px;
+}
+.titulo-c{
+    font-family: "Open Sans", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 700;
+    font-style: normal;
+    font-variation-settings:
+      "wdth" 100;
+    color: rgb(255, 255, 255);
+    font-size: 20px;
+    margin-top: 10vh;
+}
+.titulo-cer{
+    font-family: "Open Sans", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 700;
+    font-style: normal;
+    font-variation-settings:
+      "wdth" 100;
+    color: rgb(5, 5, 5);
+}
+.clase-agregada{
+height: 300px;
+width: 250px;
+place-items: center;
+position: relative;
+align-items: center;
+}
+.arreglo-titulo{
+    height: 35vh;
+    width: 100%;
+    place-items: center;
+    display: flex;
+    flex-direction: column;
+    border-radius: 10px;
+    gap: 1vh;
+    background-color: #9e9c9c9c;
+}
+.imagen-clase{
+    
+    width: 90%;
+    height: 70%;
+}
+.ima-video{
+    width:90%;
+    height: 50%;
+    background-color: #979393;
+}
+.descripcion{
+    width: 30vh;
+    height: auto;
+    place-items: center;
+    font-size: 9px;
+}
+.titulo{
+    width: 90%;
+    height: 20%;
+    font-size: 15px;
+}
+.segundario{
+    width: 50%;
+    height: 30vh;
+    background-color: rgb(255, 255, 255);
+    margin-top: 5vh;
+    border-radius: 10px;
+    text-align: center;
+    place-items: center;
+}
+.panel-publicaciones{
+    width: 95%;
+    height: 70%;
+    display: flex;
+    flex-direction: column;
+    overflow-x: auto;
+}
+.lista{
+    display: flex;
+    font-family: "Open Sans", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 700;
+    font-style: normal;
+    font-variation-settings:
+      "wdth" 100;
+    color: rgb(5, 5, 5);
+}
+.video-flotante {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 0, 0, 0.8);
+    padding: 10px;
+    border-radius: 10px;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.video-contenedor {
+    position: relative;
+    max-width: 80vw;
+    width: 119vh;
+    height: 67vh;
+}
+
+.cerrar-video {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: rgba(0, 0, 0, 0.678);
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 5px;
+}
+
+
+@media(max-width: 768px){
+    
+    .principal{
+        display:flex;
+        flex-direction: column;
+        place-items: center;
+        height: 100vh;
+        width: 100%;
+    }
+    .contenedor{
+        background-color: rgb(255, 255, 255);
+        width: 90%;
+        height: 80vh;
+    }
+    .clase-agregada{
+        width: 47%;
+        height: 80%;
+        margin-top: -35px;
+    }
+    .certificaciones{
+        margin-top: 30px;
+        height: 100vh;
+        width: 90%;
+        overflow-x: scroll;
+    }
+    .item-certi{
+        width: 90%;
+    }
+    .segundario{
+        width: 90%;
+        height: 30vh;
+        margin-bottom: -35px;
+    }
+    .disponibles{
+        width: 90%;
+        height: 70vh;
+    }
+    .tercero{
+        place-items: center;
+    }
+    .clase{
+        place-items: center;
+    }
+    .imagen-curso{
+        height: 10%;
+    }
+    
+
+}
