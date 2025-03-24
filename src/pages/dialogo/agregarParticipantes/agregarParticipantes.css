@@ -1,9 +1,0 @@
-.participantes-lista{
-    width: 90%;
-    height: 20vh;
-    place-items: center;
-    place-content: center;
-    display: flex;
-    flex-direction: column;
-    overflow-y: auto;
-}
