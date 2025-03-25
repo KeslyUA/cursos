@@ -15,6 +15,9 @@ model usuarios {
   cargo         String?   @db.VarChar(50)
 
   cursos        cursos[]
+  evaluaciones  Evaluacion[]
+  respuestas     RespuestaUsuario[]
+  agregados     agregados[]
 }
 
 model cursos {
@@ -31,7 +34,9 @@ model cursos {
   obligatorio  String?   @db.VarChar(50)
   videoURL      String?
   idUsuario     Int  
-  usuario     Usuario @relation(fields: [idUsuario], references: [id], onDelete: Cascade)
+  usuario     usuarios @relation(fields: [idUsuario], references: [id], onDelete: Cascade)
+  evaluaciones Evaluacion[]
+  agregados    agregados[]
 
 }
 
@@ -41,8 +46,8 @@ model Evaluacion {
   idUsuario   Int
   idCurso     Int
   fechaCreacion DateTime      @default(now())
-  usuario     Usuario         @relation(fields: [idUsuario], references: [id], onDelete: Cascade)
-  curso       Curso           @relation(fields: [idCurso], references: [id], onDelete: Cascade)
+  usuario     usuarios         @relation(fields: [idUsuario], references: [id], onDelete: Cascade)
+  curso       cursos           @relation(fields: [idCurso], references: [id], onDelete: Cascade)
   alternativas Alternativa[]
   respuestasUsuarios RespuestaUsuario[]
 }
@@ -70,8 +75,17 @@ model RespuestaUsuario {
   idEvaluacion Int
   idAlternativa Int
   idRespuesta Int
-  usuario     Usuario         @relation(fields: [idUsuario], references: [id], onDelete: Cascade)
+  usuario     usuarios         @relation(fields: [idUsuario], references: [id], onDelete: Cascade)
   evaluacion  Evaluacion       @relation(fields: [idEvaluacion], references: [id], onDelete: Cascade)
   alternativa Alternativa     @relation(fields: [idAlternativa], references: [id], onDelete: Cascade)
   respuesta   Respuesta       @relation(fields: [idRespuesta], references: [id], onDelete: Cascade)
+}
+
+model agregados {
+  id        Int    @id @default(autoincrement())
+  idUsuario Int
+  idCurso   Int
+
+  usuario   usuarios @relation(fields: [idUsuario], references: [id], onDelete: Cascade)
+  curso     cursos   @relation(fields: [idCurso], references: [id], onDelete: Cascade)
 }

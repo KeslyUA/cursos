@@ -7,11 +7,12 @@ import misCursos from '../publicacion/Publicacion';
 const Cursos = ({ curso }) => {
     const [cursos, setCursos] = useState([]);
     const [cursosSeleccionados, setCursosSeleccionados] = useState([]);
-    const [misCursos,setMisCursos] =useState([])
-    const videoRef = useRef(null);
+    const [videoSeleccionado,setVideoSeleccionado] = useState([]);
+    const [misCursos,setMisCursos] =useState([]);
+    const videoRefs = useRef({});
     const [tiempoGuardado, setTiempoGuardado] = useState(0);
     const [mostrarVideo, setMostrarVideo] = useState(false);
-
+    const [videoActivo, setVideoActivo] = useState(null);
 
 
     useEffect(() => {
@@ -30,42 +31,99 @@ const Cursos = ({ curso }) => {
           })
           .then((response) => response.json())
           .then((data) => {
-              console.log("Datos recibidos:", data); 
               setCursos(Array.isArray(data) ? data : []); 
           })
           .catch((error) => console.error("Error al obtener cursos:", error));
     }, []);
 
-    //para agregar curso seleccionado
-    const agregarCurso = (curso) => { 
+    //para actualizar
+    const fetchCursos = async () => {
+        try {
+            const token = localStorage.getItem("token");
+            const response = await fetch("http://localhost:3001/agregados", {
+                headers: { Authorization: `Bearer ${token}` },
+            });
     
-        if (!cursosSeleccionados.some(c => c.id === curso.id)) {  
-            
-                const nuevosCursos = [...cursosSeleccionados, curso]; 
-                setCursosSeleccionados(nuevosCursos);
-                localStorage.setItem("cursosSeleccionados", JSON.stringify(nuevosCursos)); 
-        } else {
-            console.warn("El curso ya está en la lista:", curso);
+            if (!response.ok) throw new Error("Error al obtener los cursos");
+    
+            const data = await response.json();
+            setVideoSeleccionado(data);
+        } catch (error) {
+            console.error("Error al obtener los cursos:", error);
         }
     };
+    
+    useEffect(() => {
+        fetchCursos(); 
+    }, []);
+    
+
+    //para agregar curso seleccionado
+    const agregarCurso =async (idCurso) => { 
+        
+        try {
+            const token = localStorage.getItem("token"); 
+
+            if (!token) {
+                console.error("No hay token almacenado.");
+                return;
+            }
+            const response = await fetch("http://localhost:3001/agregados", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}` 
+                },
+                body: JSON.stringify({ idCurso })
+            });
+    
+            const data = await response.json();
+    
+            if (!response.ok) {
+                throw new Error(data.error || "Error al agregar el curso");
+            }
+    
+            await fetchCursos();
+        } catch (error) {
+            console.error("Error:", error.message);
+        }
+    };
+
+    
+    
 
     //para eliminar curso seleccionado
-    const eliminarCurso = (id) => {
-        const nuevosCursos = cursosSeleccionados.filter(curso => curso.id !== id);
-        setCursosSeleccionados(nuevosCursos);
-        localStorage.setItem("cursosSeleccionados", JSON.stringify(nuevosCursos)); 
+    const eliminarCurso = async (idCurso) => {
+        try {
+            const token = localStorage.getItem("token");
+    
+            if (!token) {
+                console.error("No hay token almacenado.");
+                return;
+            }
+    
+            const response = await fetch(`http://localhost:3001/agregados/${idCurso}`, {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`
+                }
+            });
+    
+            const data = await response.json();
+    
+            if (!response.ok) {
+                throw new Error(data.error || "Error al eliminar el curso");
+            }
+    
+            await fetchCursos(); 
+        } catch (error) {
+            console.error("Error:", error.message);
+        }
     };
     
-    //guaradar en localstore para no perder cursos seleccionados :)
-
-    useEffect(() =>{
-        const cursosGuardados = localStorage.getItem("cursosSeleccionados");
-        if (cursosGuardados) {
-            setCursosSeleccionados(JSON.parse(cursosGuardados));
-        }
-    },[])
-
-     
+    
+    
     const obtenerPublicacionPorUsuario = async () => {
               try {
                 const response = await fetch("http://localhost:3001/publicaciones", {
@@ -106,33 +164,30 @@ const Cursos = ({ curso }) => {
 
     
 
-    const manejarReproduccion = () => {
+    const manejarReproduccion = (idCurso) => {
+        setVideoActivo(idCurso)
         setMostrarVideo(true);
         setTimeout(() => {
-            if (videoRef.current) {
-                videoRef.current.currentTime = tiempoGuardado;
-                videoRef.current.play();
+            if (videoRefs.current[idCurso]) {
+                videoRefs.current[idCurso].currentTime = tiempoGuardado[idCurso] || 0;
+                videoRefs.current[idCurso].play();
             }
         }, 100);
         };
 
         const cerrarVideo = () => {
-            if (videoRef.current) {
-                videoRef.current.pause();
-                videoRef.current.currentTime = 0; 
-            }
-            setMostrarVideo(false); 
+            setMostrarVideo(false);
+            setVideoActivo(null);
         };    
     
-    const manejarPausa = () => {
-        if (videoRef.current && curso && curso.id) {
-                const tiempoActual = videoRef.current.currentTime;
-                if (tiempoActual > 0){
-                   localStorage.setItem(`videoTiempo-${curso.id}`, tiempoActual);  
-                }
-                
+        const manejarPausa = (idCurso) => {
+            if (videoRefs.current[idCurso]) {
+                setTiempoGuardado((prev) => ({
+                    ...prev,
+                    [idCurso]: videoRefs.current[idCurso].currentTime,
+                }));
             }
-        };      
+        };     
 
 
     const mouseEnter = (event) =>{
@@ -166,18 +221,24 @@ const Cursos = ({ curso }) => {
             </style>
             <div className='principal'>
                 <div className='contenedor'>
-                {cursosSeleccionados.length> 0 &&(
+                {videoSeleccionado.length> 0 &&(
                      <div className='fondo'>
-                     {cursosSeleccionados.map((curso) => (
+                     {videoSeleccionado.map((curso) => (
                          <div key={curso.id} className='clase-agregada' >
                             <br />
                             
                              <div className='arreglo-titulo'>
-                                 <div className='titulo'>{curso.titulo}</div>
+                                 <div className='titulo'>{curso.curso.titulo}</div>
                                  <div className='ima-video'>
-                            {curso?.videoURL ? (
-                                <video ref={videoRef} width="100%" muted playsInline loop controls>
-                                    <source src={curso.videoURL} type="video/mp4" />
+                            {curso.curso.videoURL ? (
+                                <video  
+                                width="100%" 
+                                muted 
+                                playsInline 
+                                loop 
+                                controls
+                                >
+                                    <source src={curso.curso.videoURL}  type="video/mp4" />
                                     Tu navegador no soporta el video.
                                 </video>
                             ) : (
@@ -195,20 +256,27 @@ const Cursos = ({ curso }) => {
                                     {curso.fechaCierre ? new Date(curso.fechaCierre).toLocaleDateString() : "No disponible"}
                                     </p> 
                                  </div>
-                                 <Button variant="contained" size="small" onClick={manejarReproduccion}>
+                                 <Button variant="contained" size="small" onClick={() => manejarReproduccion(curso.id)}>
                                     reanudar
                                 </Button>
-                                <Button variant="contained" size="small" color='error' onClick={() => eliminarCurso(curso.id)}>
+                                <Button variant="contained" size="small" color='error' onClick={() => eliminarCurso(curso.idCurso)}>
                                     eliminar
                                 </Button>
                                 <br />
                              </div>
-                                {mostrarVideo && (
+                                {mostrarVideo && videoActivo === curso.id && (
                                     <div className="video-flotante" onClick={cerrarVideo}>
                                         <div className="video-contenedor">
-                                        {curso?.videoURL ? (
-                                            <video ref={videoRef} width="100%" muted playsInline loop controls onPause={manejarPausa} >
-                                            <source src={curso.videoURL} type="video/mp4" />
+                                        {curso.curso.videoURL ? (
+                                            <video ref={(el) => (videoRefs.current[curso.id] = el)} 
+                                            width="100%" 
+                                            playsInline 
+                                            loop 
+                                            controls 
+                                            autoPlay
+                                            onPause={() => manejarPausa(curso.id)} 
+                                            >
+                                            <source src={curso.curso.videoURL} type="video/mp4" />
                                                 Tu navegador no soporta el video.
                                             </video>
                                             ) : (
@@ -267,7 +335,7 @@ const Cursos = ({ curso }) => {
                        <div key={curso.id} className='clase'>
                        <div className='clase-linea'>
                         <div className='font'>{curso.titulo}</div>
-                       <Button variant="outlined" size="medium" onClick={() => agregarCurso(curso)}>
+                       <Button variant="outlined" size="medium" onClick={() => agregarCurso(curso.id)}>
                         Agregar
                         </Button>
                         </div> 

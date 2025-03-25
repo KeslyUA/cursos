@@ -44,7 +44,7 @@ export default api;
 //middlerware
 const verificarToken = (rolesPermitidos) => (req, res, next) => {
   const authHeader = req.headers["authorization"];
-  console.log("Encabezado Authorization recibido:", authHeader);
+ 
 
   if (!authHeader) {
     return res.status(403).json({ error: "Acceso denegado, token requerido" });
@@ -248,6 +248,90 @@ app.get("/participantes", async (req, res) => {
   res.status(500).json({ error: error.message }); 
   }
 });
+
+
+//para guardar cursos seleccionados
+app.post("/agregados", verificarToken(["administrador", "trabajador"]), async (req, res) => {
+  try {
+      const { idCurso } = req.body;
+      if (!idCurso) {
+          return res.status(400).json({ error: "ID del curso es requerido" });
+      }
+
+      const idUsuario = req.user.id; 
+      const cursoExistente = await prisma.agregados.findFirst({
+        where: {
+            idUsuario: idUsuario,
+            idCurso: idCurso,
+        },
+      });
+
+    if (cursoExistente) {
+        return res.status(400).json({ error: "El curso ya fue agregado" });
+    }
+      const cursoAgregado = await prisma.agregados.create({
+          data: {
+              idUsuario: idUsuario,
+              idCurso: idCurso,
+          },
+      });
+
+      res.json(cursoAgregado);
+  } catch (error) {
+      res.status(500).json({ error: error.message });
+  }
+});
+
+//obtener agregados
+
+app.get("/agregados", verificarToken(["administrador", "trabajador"]), async (req, res) => {
+  try {
+      if (!req.user || !req.user.id) {
+          return res.status(400).json({ error: "ID de usuario no encontrado en el token" });
+      }
+      const idUsuario = req.user.id; 
+
+      const cursosAgregados = await prisma.agregados.findMany({
+          where: { idUsuario: idUsuario },
+          include: {
+              curso: true,
+          },
+      });
+      res.json(cursosAgregados);
+  } catch (error) {
+      res.status(500).json({ error: error.message });
+  }
+});
+
+//eliminar agregado
+
+app.delete("/agregados/:idCurso", verificarToken(["administrador", "trabajador"]), async (req, res) => {
+  try {
+      const { idCurso } = req.params;
+      const idUsuario = req.user.id;
+      if (!idCurso) {
+          return res.status(400).json({ error: "ID del curso es requerido" });
+      }
+
+      const cursoExistente = await prisma.agregados.findFirst({
+          where: { idUsuario, idCurso: Number(idCurso) }
+      });
+
+      if (!cursoExistente) {
+          return res.status(404).json({ error: "Curso no encontrado en la lista de agregados" });
+      }
+
+      await prisma.agregados.delete({
+          where: { id: cursoExistente.id }
+      });
+
+      res.json({ message: "Curso eliminado correctamente" });
+  } catch (error) {
+      res.status(500).json({ error: error.message });
+  }
+});
+
+
 
 
 const PORT = process.env.PORT || 3001;
