@@ -15,6 +15,7 @@ import { Typography,FormControlLabel } from "@mui/material";
 import Checkbox from '@mui/material/Checkbox';
 import AgregarParticipantes from '../dialogo/agregarParticipantes/AgregarParticipates';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import CircularProgress from '@mui/material/CircularProgress';
 
 const Publicacion = () => {
     const [videoSrc, setVideoSrc] = useState(null);
@@ -24,7 +25,7 @@ const Publicacion = () => {
     const [abrirDialogo, setabrirDialogo] = React.useState(false);
     const [participantesSeleccionados, setParticipantesSeleccionados] = useState([]);
     const [alternativas, setAlternativas] = useState([]);
-    const [mostrarDiv,setMostrardiv] = useState([]);
+    const [cargando, setCargando] = useState(false);
     const [formData, setFormData] = useState({
         titulo: "",
         descripcion: "",
@@ -104,6 +105,7 @@ const Publicacion = () => {
 
     
         try {
+            setCargando(true);
             const response = await fetch("http://localhost:3001/cursos", {
                 method: "POST",
                 headers: {
@@ -141,34 +143,11 @@ const Publicacion = () => {
     
         } catch (error) {
             console.error("Error al enviar los datos:", error);
+        }finally{
+            setCargando(false)
         }
     };
-    //guardar de las preguntas
-    const guardarEvaluacion = async () => {
-        const evaluacionData = {
-          titulo: quiz.titulo,
-          alternativas: alternativas.map((alt) => ({
-            texto: alt.texto,
-            correcta: alt.seleccionada,
-          })),
-        };
-      
-        try {
-          const response = await fetch("http://localhost:3001/evaluaciones", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(evaluacionData),
-          });
-      
-          if (response.ok) {
-            alert("Evaluación guardada con éxito");
-            setQuiz({ titulo: "", alternativas: [] });
-            setAlternativas([]);
-          }
-        } catch (error) {
-          console.error("Error al guardar la evaluación:", error);
-        }
-      };
+    
     
    const obtenerPublicacionPorUsuario = async () => {
           try {
@@ -190,6 +169,35 @@ const Publicacion = () => {
             console.error("Error:", error);
           }
         };
+
+    //guardar evaluacion
+    const guardarEvaluacion = async () => {
+        try {
+            const datos = {
+                titulo: quiz.titulo,
+                alternativas: alternativas,
+              };
+          
+              console.log("Datos enviados al backend:", datos);
+            const response = await fetch("http://localhost:3001/evaluaciones", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${localStorage.getItem("token")}` 
+                },
+                body: JSON.stringify({
+                    titulo: quiz.titulo,
+                    alternativas: alternativas
+                })
+            });
+    
+            const data = await response.json();
+            console.log("Evaluación guardada:", data);
+        } catch (error) {
+            console.error("Error al guardar evaluación:", error);
+        }
+    };
+        
 
     //para obtener lista de publicaciones
 
@@ -236,7 +244,12 @@ const Publicacion = () => {
             @import url('https://fonts.googleapis.com/css2?family=Cabin:ital,wght@0,400..700;1,400..700&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Public+Sans:ital,wght@0,100..900;1,100..900&family=Roboto+Condensed:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
             </style>
                 <div className="publicacion">
+                    <div className='carga'>
+                      {cargando && <CircularProgress size="3rem"/> } 
+                    </div>
+                     
                     <div className="contenedor-publicacion">
+                       
                         <div className="conteiner-videos">
                         <div className='conf-sup'>
                             <div className='configuracion'>
@@ -402,7 +415,6 @@ const Publicacion = () => {
                                                             <Checkbox
                                                                 name='respuesta'
                                                                 checked={alt.seleccionada}
-                                                                value={quiz.respuesta}
                                                                 onChange={() => filaCheckbox(index)}
                                                             />
                                                             }

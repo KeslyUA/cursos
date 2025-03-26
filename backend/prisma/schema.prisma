@@ -15,9 +15,8 @@ model usuarios {
   cargo         String?   @db.VarChar(50)
 
   cursos        cursos[]
-  evaluaciones  Evaluacion[]
-  respuestas     RespuestaUsuario[]
   agregados     agregados[]
+  preguntas      pregunta[]
 }
 
 model cursos {
@@ -35,51 +34,26 @@ model cursos {
   videoURL      String?
   idUsuario     Int  
   usuario     usuarios @relation(fields: [idUsuario], references: [id], onDelete: Cascade)
-  evaluaciones Evaluacion[]
   agregados    agregados[]
 
 }
 
-model Evaluacion {
-  id          Int             @id @default(autoincrement())
+model pregunta {
+  id          Int           @id @default(autoincrement())
   titulo      String
-  idUsuario   Int
-  idCurso     Int
-  fechaCreacion DateTime      @default(now())
-  usuario     usuarios         @relation(fields: [idUsuario], references: [id], onDelete: Cascade)
-  curso       cursos           @relation(fields: [idCurso], references: [id], onDelete: Cascade)
-  alternativas Alternativa[]
-  respuestasUsuarios RespuestaUsuario[]
+  idUsuario  Int
+  usuario     usuarios  @relation(fields: [idUsuario], references: [id], onDelete: Cascade)
+  alternativas alternativa[]
 }
 
-model Alternativa {
-  id          Int             @id @default(autoincrement())
-  idEvaluacion Int
-  enunciado   String
-  evaluacion  Evaluacion       @relation(fields: [idEvaluacion], references: [id], onDelete: Cascade)
-  respuestas  Respuesta[]
-  respuestasUsuarios RespuestaUsuario[]
+model alternativa {
+  id         Int     @id @default(autoincrement())
+  texto      String
+  seleccionada Boolean @default(false) 
+  idPreguntas     Int
+  preguntas       pregunta    @relation(fields: [idPreguntas], references: [id], onDelete: Cascade)
 }
 
-model Respuesta {
-  id          Int             @id @default(autoincrement())
-  idAlternativa Int
-  correcta    Boolean         @default(false)
-  alternativa Alternativa     @relation(fields: [idAlternativa], references: [id], onDelete: Cascade)
-  respuestasUsuarios RespuestaUsuario[]
-}
-
-model RespuestaUsuario {
-  id          Int             @id @default(autoincrement())
-  idUsuario   Int
-  idEvaluacion Int
-  idAlternativa Int
-  idRespuesta Int
-  usuario     usuarios         @relation(fields: [idUsuario], references: [id], onDelete: Cascade)
-  evaluacion  Evaluacion       @relation(fields: [idEvaluacion], references: [id], onDelete: Cascade)
-  alternativa Alternativa     @relation(fields: [idAlternativa], references: [id], onDelete: Cascade)
-  respuesta   Respuesta       @relation(fields: [idRespuesta], references: [id], onDelete: Cascade)
-}
 
 model agregados {
   id        Int    @id @default(autoincrement())

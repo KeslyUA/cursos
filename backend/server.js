@@ -51,7 +51,7 @@ const verificarToken = (rolesPermitidos) => (req, res, next) => {
   }
 
   const token = authHeader.split(" ")[1]; 
-
+  
   if (!token) {
     return res.status(403).json({ error: "Acceso denegado, token no válido" });
   }
@@ -331,7 +331,37 @@ app.delete("/agregados/:idCurso", verificarToken(["administrador", "trabajador"]
   }
 });
 
+//api para guardar evaluacion
 
+app.post("/evaluaciones", async (req, res) => {
+  try {
+    console.log("Datos del usuario:", req.user); 
+      const { titulo, alternativas } = req.body;
+      const idUsuario = req.user.id; 
+      
+      console.log("Datos recibidos:", req.body);
+
+      const nuevaPregunta = await prisma.pregunta.create({
+        
+          data: {
+              titulo,
+              idUsuario, 
+              alternativas: {
+                  create: alternativas.map((alt) => ({
+                      texto: alt.texto,
+                      seleccionada: alt.seleccionada,
+                  })),
+              },
+          },
+          include: { alternativas: true },
+      });
+      console.log("Pregunta guardada en la BD:", nuevaPregunta);
+      res.status(201).json(nuevaPregunta);
+  } catch (error) {
+    console.error("Error al guardar la evaluación:", error.message, error.meta);
+    res.status(500).json({ error: error.message });
+  }
+});
 
 
 const PORT = process.env.PORT || 3001;
