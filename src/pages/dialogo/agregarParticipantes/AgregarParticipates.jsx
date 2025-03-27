@@ -22,10 +22,10 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   },
 }));
 
+export default function AgregarParticipantes({open,onClose,onSeleccionarParticipantes,idCurso}) {
+  
 
-export default function AgregarParticipantes({open,onClose,onSeleccionarParticipantes}) {
-
-    const [participantes,setParticipantes] = useState([])
+    const [participantes,setParticipantes] = useState([]);
     const [seleccionados, setSeleccionados] = useState([]);
     
     useEffect(() => {
@@ -63,11 +63,31 @@ export default function AgregarParticipantes({open,onClose,onSeleccionarParticip
             );
         };
     
-        const agregarSeleccionados = () => {
-            const seleccionadosDetalles = participantes.filter((p) => seleccionados.includes(p.id));
-            onSeleccionarParticipantes(seleccionadosDetalles);
-            onClose();
-        };
+        //guardar participantes
+        const agregarSeleccionados = async () => {
+          const seleccionadosDetalles = participantes.filter((p) => seleccionados.includes(p.id));
+      
+          try {
+              const response = await fetch('http://localhost:3001/participantesAgregados', {
+                  method: 'POST',
+                  headers: {
+                      'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify({ idCurso:idCurso,
+                    participantes: seleccionadosDetalles}),
+              });
+      
+              const data = await response.json();
+              console.log('Respuesta del servidor:', data);
+              console.log("idCurso",idCurso)
+      
+              onSeleccionarParticipantes(seleccionadosDetalles);
+              onClose();
+          } catch (error) {
+              console.error('Error al guardar los participantes:', error);
+          }
+      };
+      
   return (
     
       <BootstrapDialog

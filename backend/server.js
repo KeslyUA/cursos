@@ -223,21 +223,6 @@ app.get("/publicaciones", verificarToken(["administrador", "trabajador"]), async
   }
 });
 
-//para guardar evaluaciones
-app.post("/evaluaciones",async(req,res) =>{
-  try{
-    const{titulo,idCurso} =req.body;
-    const id_usuario = req.user.id;
-    const nuevaevaluacion=await prisma.evaluacion.create({
-      data:{titulo,id_usuario,idCurso}
-    })
-    res.status(201).json(nuevaevaluacion);
-
-  }catch{
-    res.status(500).json({ error: "Error al agregar evaluacion" });
-  }
-})
-
 //obtener participantes
 app.get("/participantes", async (req, res) => {
   try {
@@ -333,9 +318,8 @@ app.delete("/agregados/:idCurso", verificarToken(["administrador", "trabajador"]
 
 //api para guardar evaluacion
 
-app.post("/evaluaciones", async (req, res) => {
+app.post("/evaluaciones", verificarToken(["administrador"]), async (req, res) => {
   try {
-    console.log("Datos del usuario:", req.user); 
       const { titulo, alternativas } = req.body;
       const idUsuario = req.user.id; 
       
@@ -355,13 +339,31 @@ app.post("/evaluaciones", async (req, res) => {
           },
           include: { alternativas: true },
       });
-      console.log("Pregunta guardada en la BD:", nuevaPregunta);
       res.status(201).json(nuevaPregunta);
   } catch (error) {
     console.error("Error al guardar la evaluación:", error.message, error.meta);
     res.status(500).json({ error: error.message });
   }
 });
+
+//API guardar participantes
+app.post("/participantesAgregados",async(req,res) =>{
+  try{
+    const {participantes,idCurso} =req.body;
+    console.log("ete",idCurso)
+    const nuevosparticipantes=await prisma.participante.createMany({
+      data: participantes.map(p => ({
+        idUsuario: p.id,
+        idCurso:idCurso,
+      })),
+    }
+    );
+    res.json({message:"participantes guardados en base",nuevosparticipantes})
+
+  }catch(error){
+      res.status(500).json({message:"error al guardar participantes"})
+  }
+})
 
 
 const PORT = process.env.PORT || 3001;

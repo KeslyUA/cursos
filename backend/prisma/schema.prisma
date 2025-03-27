@@ -17,6 +17,7 @@ model usuarios {
   cursos        cursos[]
   agregados     agregados[]
   preguntas      pregunta[]
+  participantes   participante[]
 }
 
 model cursos {
@@ -35,6 +36,8 @@ model cursos {
   idUsuario     Int  
   usuario     usuarios @relation(fields: [idUsuario], references: [id], onDelete: Cascade)
   agregados    agregados[]
+  participantes participante[]
+  preguntas pregunta[]
 
 }
 
@@ -42,7 +45,9 @@ model pregunta {
   id          Int           @id @default(autoincrement())
   titulo      String
   idUsuario  Int
+  idCurso    Int
   usuario     usuarios  @relation(fields: [idUsuario], references: [id], onDelete: Cascade)
+  curso     cursos  @relation(fields: [idCurso], references: [id], onDelete: Cascade)
   alternativas alternativa[]
 }
 
@@ -63,3 +68,12 @@ model agregados {
   usuario   usuarios @relation(fields: [idUsuario], references: [id], onDelete: Cascade)
   curso     cursos   @relation(fields: [idCurso], references: [id], onDelete: Cascade)
 }
+
+model participante {
+  id        Int    @id @default(autoincrement())
+  idUsuario Int     
+  idCurso   Int
+  usuario   usuarios @relation(fields: [idUsuario], references: [id], onDelete: Cascade)
+  curso   cursos @relation(fields: [idCurso], references: [id], onDelete: Cascade)
+}
+

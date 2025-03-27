@@ -16,6 +16,7 @@ import Checkbox from '@mui/material/Checkbox';
 import AgregarParticipantes from '../dialogo/agregarParticipantes/AgregarParticipates';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import CircularProgress from '@mui/material/CircularProgress';
+import agregarSeleccionados from '../dialogo/agregarParticipantes/AgregarParticipates'
 
 const Publicacion = () => {
     const [videoSrc, setVideoSrc] = useState(null);
@@ -26,6 +27,7 @@ const Publicacion = () => {
     const [participantesSeleccionados, setParticipantesSeleccionados] = useState([]);
     const [alternativas, setAlternativas] = useState([]);
     const [cargando, setCargando] = useState(false);
+    const [idCurso,setIdCurso] = useState(null);
     const [formData, setFormData] = useState({
         titulo: "",
         descripcion: "",
@@ -78,7 +80,6 @@ const Publicacion = () => {
        
     };
     
-    const [cursoId,setCursoId] = useState(null);
     const GuardarDatos = async () => {
 
         if (!Referencia.current?.files[0]) {
@@ -114,14 +115,9 @@ const Publicacion = () => {
                 body: enviar,
             });
     
-            if (!response.ok) {
-                const errorResponse = await response.json(); 
-                throw new Error("Error al guardar el curso");
-            }
-    
             const data = await response.json();
             console.log("Curso guardado correctamente:", data);
-            setCursoId(data.id);
+            
     
             obtenerPublicacionPorUsuario(); 
             setFormData({
@@ -427,7 +423,7 @@ const Publicacion = () => {
                                         
                                     <div >
                                          <Button variant="outlined" size="medium" onClick={guardarEvaluacion}>
-                                         Guardar
+                                         Agregar
                                         </Button>
                                     </div>
                                    
@@ -459,7 +455,7 @@ const Publicacion = () => {
                     </div>
                     
                 </div>
-                <AgregarParticipantes open={abrirDialogo} onClose={cerrarDialogo} onSeleccionarParticipantes={setParticipantesSeleccionados}  />
+                <AgregarParticipantes open={abrirDialogo} onClose={cerrarDialogo} onSeleccionarParticipantes={setParticipantesSeleccionados} idCurso={idCurso} />
             
         </div>
     )}
