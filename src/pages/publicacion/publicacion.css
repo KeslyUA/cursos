@@ -59,9 +59,7 @@
     flex-direction: column;
     gap: 15px;
 }
-.box-videos{
-    height: 100%;
-    width: 50%;
+.fuente{
     margin-top: -2vh;
     font-family: "Open Sans", sans-serif;
     font-optical-sizing: auto;
@@ -71,7 +69,16 @@
       "wdth" 100;
     color: rgb(20, 20, 19);
     font-size: 30px;
+    text-align: center;
+}
+.box-videos{
+    height: 100%;
+    width: 50%;
     place-items: center;
+    display: flex;
+    flex-direction: column;
+    gap:20px;
+    
 }
 .arreglo{
     display: flex;
@@ -82,15 +89,19 @@
     
 }
 .video{
-    height: 60%;
-    width: 90%;
-    margin-top: -20px;
+    height: 60vh;
+    width: 70%;
+    margin-top: 50px;
     font-size: 20px;
+}
+.video-cont{
+    text-align: center;
+    margin-top: 20px;
+    width: 100%;
 }
 .box-boton{
     height: 10%;
     width: 60%;
-    margin-top: 3vh;
     place-items: center;
 }
 .url{

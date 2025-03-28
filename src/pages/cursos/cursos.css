@@ -53,7 +53,7 @@ width: 80%;
     height: 100%;
     width: 100%;
     display: flex;
-    justify-content: center;
+    place-items: center;
     column-gap: 50px;
     flex-wrap: wrap;
     margin-top: 20px;
@@ -68,6 +68,7 @@ width: 80%;
     place-items: center;
     border-radius: 20px;
     background-color: rgba(18, 20, 20, 0.726);
+    display: flex;
 }
 .clase-linea{
     display: flex;
@@ -88,7 +89,7 @@ width: 80%;
 
 }
 .imagen-curso{
-    height: 18vh;
+    height: 70%;
     width: 85%;
     margin-top: 10px;
     place-items: center;
@@ -121,14 +122,14 @@ width: 80%;
     color: rgb(5, 5, 5);
 }
 .clase-agregada{
-height: 300px;
+height: 380px;
 width: 250px;
 place-items: center;
 position: relative;
 align-items: center;
 }
 .arreglo-titulo{
-    height: 35vh;
+    height: 380px;
     width: 100%;
     place-items: center;
     display: flex;
@@ -201,8 +202,8 @@ align-items: center;
 .video-contenedor {
     position: relative;
     max-width: 80vw;
-    width: 119vh;
-    height: 67vh;
+    width: auto;
+    height: auto;
 }
 
 .cerrar-video {
@@ -217,6 +218,7 @@ align-items: center;
     font-size: 16px;
     border-radius: 5px;
 }
+
 
 
 @media(max-width: 768px){

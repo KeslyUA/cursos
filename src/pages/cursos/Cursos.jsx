@@ -225,14 +225,15 @@ const Cursos = ({ curso }) => {
                      <div className='fondo'>
                      {videoSeleccionado.map((curso) => (
                          <div key={curso.id} className='clase-agregada' >
-                            <br />
+                            
                             
                              <div className='arreglo-titulo'>
                                  <div className='titulo'>{curso.curso.titulo}</div>
                                  <div className='ima-video'>
                             {curso.curso.videoURL ? (
                                 <video  
-                                width="100%" 
+                                width="100%"
+                                height="100%" 
                                 muted 
                                 playsInline 
                                 loop 
@@ -269,7 +270,8 @@ const Cursos = ({ curso }) => {
                                         <div className="video-contenedor">
                                         {curso.curso.videoURL ? (
                                             <video ref={(el) => (videoRefs.current[curso.id] = el)} 
-                                            width="100%" 
+                                            width="100%"
+                                            height="100%" 
                                             playsInline 
                                             loop 
                                             controls 
@@ -342,7 +344,8 @@ const Cursos = ({ curso }) => {
                         <div className='imagen-curso'>
                             {curso.videoURL ?(
                                 <video 
-                                width="100%"  
+                                width="100%" 
+                                height="100%"
                                 muted 
                                 playsInline 
                                 preload="metadata"

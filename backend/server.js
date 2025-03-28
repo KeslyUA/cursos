@@ -260,7 +260,7 @@ app.post("/agregados", verificarToken(["administrador", "trabajador"]), async (r
               idCurso: idCurso,
           },
       });
-
+        console.log("si esta",cursoExistente)
       res.json(cursoAgregado);
   } catch (error) {
       res.status(500).json({ error: error.message });

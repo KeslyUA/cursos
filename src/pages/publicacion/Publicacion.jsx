@@ -316,9 +316,10 @@ const Publicacion = () => {
                         
                         </div>
                         <div className='box-videos'>
-                            <p>Video</p>
+                            
                             <div className='video'>
-                        <div style={{ textAlign: "center", marginTop: "20px",width: "100%" }}>
+                                <p className='fuente'>Video</p>
+                        <div className='video-cont'>
                             <input
                                 type="file"
                                 ref={Referencia}
@@ -330,10 +331,11 @@ const Publicacion = () => {
                             {videoSrc && (
                                 <div style={{ marginTop: "20px", width: "100%", maxWidth: "600px", margin: "auto" }}>
                                 <p>seleccionado:</p>
+                                <br />
                                  <video 
                                     key={videoSrc}
                                     controls 
-                                    style={{ width: "100%", height: "auto", borderRadius: "10px" }}
+                                    style={{ width: "100%", height: "100%", borderRadius: "10px" }}
                                     >
                                     <source src={videoSrc} type="video/mp4" />
                                          Tu navegador no soporta videos.
