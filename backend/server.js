@@ -266,6 +266,19 @@ app.post("/agregados", verificarToken(["administrador", "trabajador"]), async (r
       res.status(500).json({ error: error.message });
   }
 });
+//eliminar curso
+app.delete("/cursos/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+      await prisma.cursos.delete({
+          where: { id: parseInt(id) }
+      });
+      res.status(200).json({ message: "Curso eliminado con éxito" });
+  } catch (error) {
+      res.status(500).json({ error: "Error al eliminar el curso" });
+  }
+});
+
 
 //obtener agregados
 

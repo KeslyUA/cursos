@@ -43,6 +43,7 @@ const Publicacion = () => {
 
     const selectorCurso = (curso) => {
         setFormData({
+            id:curso.id,
             titulo: curso.titulo,
             descripcion: curso.descripcion,
             area: curso.area,
@@ -131,7 +132,6 @@ const Publicacion = () => {
             });
     
             const data = await response.json();
-            console.log("Curso guardado correctamente:", data);
             
     
             obtenerPublicacionPorUsuario(); 
@@ -151,7 +151,6 @@ const Publicacion = () => {
 
             setVideoSrc(null);
             Referencia.current.value = ""; 
-    
         } catch (error) {
             console.error("Error al enviar los datos:", error);
         }finally{
@@ -159,7 +158,46 @@ const Publicacion = () => {
         }
     };
     
+    //eliminar publicacion
+
+    const eliminarCurso = async () => {
+        if (!formData.titulo) {
+            alert("Selecciona un curso antes de eliminar.");
+            return;
+        }
     
+        const confirmacion = window.confirm("¿Estás seguro de que deseas eliminar este curso?");
+        if (!confirmacion) return;
+    
+        try {
+            const response = await fetch(`http://localhost:3001/cursos/${formData.id}`, {
+                method: "DELETE"
+            });
+            if (response.ok) {
+                alert("Curso eliminado correctamente");
+                setMisCursos(misCursos.filter((curso) => curso.id !== formData.id));
+
+                setFormData({
+                    titulo: "",
+                    descripcion: "",
+                    area: "",
+                    duracion: "",
+                    fechaPublica: "",
+                    fechaCierre: "",
+                    certificado: "",
+                    cursoLibre: "",
+                    evaluacion: "",
+                    obligatorio: ""
+                });
+            } else {
+                alert("Error al eliminar el curso");
+            }
+        } catch (error) {
+            console.error("Error:", error);
+        }
+    };
+    
+
    const obtenerPublicacionPorUsuario = async () => {
           try {
             const response = await fetch("http://localhost:3001/publicaciones", {
@@ -189,7 +227,6 @@ const Publicacion = () => {
                 alternativas: alternativas,
               };
           
-              console.log("Datos enviados al backend:", datos);
             const response = await fetch("http://localhost:3001/evaluaciones", {
                 method: "POST",
                 headers: {
@@ -203,7 +240,6 @@ const Publicacion = () => {
             });
     
             const data = await response.json();
-            console.log("Evaluación guardada:", data);
         } catch (error) {
             console.error("Error al guardar evaluación:", error);
         }
@@ -362,7 +398,7 @@ const Publicacion = () => {
                             <Stack direction="row" spacing={2}>
                                 <Button variant="contained" color="success" onClick={abrirDialogoArchivo}>Agregar</Button>
                                 <Button variant="contained" onClick={GuardarDatos}>Guardar</Button>
-                                <Button variant="contained" color="error">Eliminar</Button>
+                                <Button variant="contained" color="error" onClick={eliminarCurso}>Eliminar</Button>
                             </Stack>
                             </div>
                         </div>

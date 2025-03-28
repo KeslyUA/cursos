@@ -22,7 +22,7 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   },
 }));
 
-export default function AgregarParticipantes({open,onClose,onSeleccionarParticipantes,idCurso}) {
+export default function AgregarParticipantes({open,onClose,onSeleccionarParticipantes}) {
   
 
     const [participantes,setParticipantes] = useState([]);
