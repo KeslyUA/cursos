@@ -40,6 +40,22 @@ const Publicacion = () => {
         obligatorio: "",
         setVideoURL:""
     });
+
+    const selectorCurso = (curso) => {
+        setFormData({
+            titulo: curso.titulo,
+            descripcion: curso.descripcion,
+            area: curso.area,
+            duracion: curso.duracion,
+            fechaPublica: curso.fechaPublica,
+            fechaCierre: curso.fechaCierre,
+            certificado: curso.certificado,
+            cursoLibre: curso.cursoLibre,
+            evaluacion: curso.evaluacion,
+            obligatorio: curso.obligatorio,
+            setVideoURL:curso.videoURL
+        });
+    };
     const [quiz,setQuiz] = useState ({
         titulo:"",
         alternativa:[],
@@ -329,8 +345,7 @@ const Publicacion = () => {
                             />
                             {videoSrc && (
                                 <div style={{ marginTop: "20px", width: "100%", maxWidth: "600px", margin: "auto" }}>
-                                <p>seleccionado:</p>
-                                <br />
+                                
                                  <video 
                                     key={videoSrc}
                                     controls 
@@ -359,7 +374,7 @@ const Publicacion = () => {
                           {misCursos.map((curso) => {
                             
                                 return (    
-                                <li className='publicaciones-activa' key={curso.id} >
+                                <li className='publicaciones-activa' key={curso.id}  onClick={()=>selectorCurso(curso)} style={{ cursor: "pointer" }}>
                                     <ul>{curso.titulo}</ul>
                                 </li>
                                 );

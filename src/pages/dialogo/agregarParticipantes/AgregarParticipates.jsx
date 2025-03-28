@@ -22,7 +22,7 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   },
 }));
 
-export default function AgregarParticipantes({open,onClose,onSeleccionarParticipantes}) {
+export default function AgregarParticipantes({open,onClose,onSeleccionarParticipantes,idCurso}) {
   
 
     const [participantes,setParticipantes] = useState([]);
@@ -64,7 +64,7 @@ export default function AgregarParticipantes({open,onClose,onSeleccionarParticip
         };
     
         //guardar participantes
-        const agregarSeleccionados = async () => {
+        const agregarSeleccionados = async (idCurso) => {
           const seleccionadosDetalles = participantes.filter((p) => seleccionados.includes(p.id));
       
           try {
@@ -73,15 +73,17 @@ export default function AgregarParticipantes({open,onClose,onSeleccionarParticip
                   headers: {
                       'Content-Type': 'application/json',
                   },
-                  body: JSON.stringify({ 
+                  body: JSON.stringify({  idCurso:idCurso,
                     participantes: seleccionadosDetalles}),
               });
       
               const data = await response.json();
-              
+              console.log('Respuesta del servidor:', data);
+              console.log("idCurso",idCurso)
       
               onSeleccionarParticipantes(seleccionadosDetalles);
               onClose();
+            
           } catch (error) {
               console.error('Error al guardar los participantes:', error);
           }
@@ -129,7 +131,7 @@ export default function AgregarParticipantes({open,onClose,onSeleccionarParticip
             </DialogContent>
             <DialogActions>
                 <Button onClick={onClose}>Cancelar</Button>
-                <Button onClick={agregarSeleccionados} color="primary">Agregar</Button>
+                <Button onClick={async () => await agregarSeleccionados()} color="primary">Agregar</Button>
             </DialogActions>
       </BootstrapDialog>
    
