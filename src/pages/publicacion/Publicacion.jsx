@@ -27,7 +27,6 @@ const Publicacion = () => {
     const [participantesSeleccionados, setParticipantesSeleccionados] = useState([]);
     const [alternativas, setAlternativas] = useState([]);
     const [cargando, setCargando] = useState(false);
-    const [idCurso,setIdCurso] = useState(null);
     const [formData, setFormData] = useState({
         titulo: "",
         descripcion: "",
@@ -457,7 +456,7 @@ const Publicacion = () => {
                     </div>
                     
                 </div>
-                <AgregarParticipantes open={abrirDialogo} onClose={cerrarDialogo} onSeleccionarParticipantes={setParticipantesSeleccionados} idCurso={idCurso} />
+                <AgregarParticipantes open={abrirDialogo} onClose={cerrarDialogo} onSeleccionarParticipantes={setParticipantesSeleccionados} />
             
         </div>
     )}

@@ -349,8 +349,8 @@ app.post("/evaluaciones", verificarToken(["administrador"]), async (req, res) =>
 //API guardar participantes
 app.post("/participantesAgregados",async(req,res) =>{
   try{
-    const {participantes,idCurso} =req.body;
-    console.log("ete",idCurso)
+    const {participantes} =req.body;
+  
     const nuevosparticipantes=await prisma.participante.createMany({
       data: participantes.map(p => ({
         idUsuario: p.id,

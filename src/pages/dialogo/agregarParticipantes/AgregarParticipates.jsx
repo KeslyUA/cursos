@@ -22,7 +22,7 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   },
 }));
 
-export default function AgregarParticipantes({open,onClose,onSeleccionarParticipantes,idCurso}) {
+export default function AgregarParticipantes({open,onClose,onSeleccionarParticipantes}) {
   
 
     const [participantes,setParticipantes] = useState([]);
@@ -73,13 +73,12 @@ export default function AgregarParticipantes({open,onClose,onSeleccionarParticip
                   headers: {
                       'Content-Type': 'application/json',
                   },
-                  body: JSON.stringify({ idCurso:idCurso,
+                  body: JSON.stringify({ 
                     participantes: seleccionadosDetalles}),
               });
       
               const data = await response.json();
-              console.log('Respuesta del servidor:', data);
-              console.log("idCurso",idCurso)
+              
       
               onSeleccionarParticipantes(seleccionadosDetalles);
               onClose();
