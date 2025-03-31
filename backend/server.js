@@ -333,7 +333,7 @@ app.delete("/agregados/:idCurso", verificarToken(["administrador", "trabajador"]
 
 app.post("/evaluaciones", verificarToken(["administrador"]), async (req, res) => {
   try {
-      const { titulo, alternativas } = req.body;
+      const { titulo, alternativas,idCurso } = req.body;
       const idUsuario = req.user.id; 
       
       console.log("Datos recibidos:", req.body);
@@ -342,7 +342,8 @@ app.post("/evaluaciones", verificarToken(["administrador"]), async (req, res) =>
         
           data: {
               titulo,
-              idUsuario, 
+              usuario: { connect: { id: idUsuario } },
+              curso: { connect: { id: idCurso } }, 
               alternativas: {
                   create: alternativas.map((alt) => ({
                       texto: alt.texto,
@@ -359,14 +360,14 @@ app.post("/evaluaciones", verificarToken(["administrador"]), async (req, res) =>
   }
 });
 
-//API guardar participantes
+//guardar participantes
 app.post("/participantesAgregados",async(req,res) =>{
   try{
     const {participantes,idCurso} =req.body;
   
     const nuevosparticipantes=await prisma.participante.createMany({
       data: participantes.map(p => ({
-        idUsuario: p.id,
+        idUsuario: p.idUsuario,
         idCurso:idCurso,
       })),
     }

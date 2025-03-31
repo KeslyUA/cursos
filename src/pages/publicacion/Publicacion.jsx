@@ -120,7 +120,7 @@ const Publicacion = () => {
       
         enviar.append("video", Referencia.current.files[0]);
 
-    
+       
         try {
             setCargando(true);
             const response = await fetch("http://localhost:3001/cursos", {
@@ -132,8 +132,13 @@ const Publicacion = () => {
             });
     
             const data = await response.json();
+            alert("se guardo correctamente",data)
+
+            if(data.id){
+                await guardarParticipantes(data.id);
+                await guardarEvaluacion(data.id);
+            }
             
-    
             obtenerPublicacionPorUsuario(); 
             setFormData({
                 titulo: "",
@@ -157,7 +162,32 @@ const Publicacion = () => {
             setCargando(false)
         }
     };
-    
+    // guaradar participantes
+     
+    const guardarParticipantes = async (idCurso) =>{
+
+        try{
+            if (!idCurso) {
+                console.error("Error: idCurso es undefined");
+                return;
+            }
+            const participantesElegidos = participantesSeleccionados.map(p =>({idUsuario: p.id}) );
+
+            const response =await fetch("http://localhost:3001/participantesAgregados",{
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ participantes: participantesElegidos, idCurso }),
+            });
+            const data = await response.json();
+            console.log("aca",data);
+
+
+        }catch(error){
+            console.error("Error al guardar los participantes:", error);
+        }
+    }
     //eliminar publicacion
 
     const eliminarCurso = async () => {
@@ -220,12 +250,8 @@ const Publicacion = () => {
         };
 
     //guardar evaluacion
-    const guardarEvaluacion = async () => {
+    const guardarEvaluacion = async (idCurso) => {
         try {
-            const datos = {
-                titulo: quiz.titulo,
-                alternativas: alternativas,
-              };
           
             const response = await fetch("http://localhost:3001/evaluaciones", {
                 method: "POST",
@@ -235,11 +261,11 @@ const Publicacion = () => {
                 },
                 body: JSON.stringify({
                     titulo: quiz.titulo,
+                    idCurso,
                     alternativas: alternativas
                 })
             });
     
-            const data = await response.json();
         } catch (error) {
             console.error("Error al guardar evaluación:", error);
         }
@@ -474,7 +500,7 @@ const Publicacion = () => {
                                             </div>
                                         
                                     <div >
-                                         <Button variant="outlined" size="medium" onClick={guardarEvaluacion}>
+                                         <Button variant="outlined" size="medium" onClick={() => guardarEvaluacion(data.id)}>
                                          Agregar
                                         </Button>
                                     </div>
