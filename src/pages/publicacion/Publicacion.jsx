@@ -180,9 +180,9 @@ const Publicacion = () => {
                 },
                 body: JSON.stringify({ participantes: participantesElegidos, idCurso }),
             });
-            const data = await response.json();
-            console.log("aca",data);
-
+            if (response.ok) {
+                setParticipantesSeleccionados([]);
+            }
 
         }catch(error){
             console.error("Error al guardar los participantes:", error);
