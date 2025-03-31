@@ -265,6 +265,11 @@ const Publicacion = () => {
                     alternativas: alternativas
                 })
             });
+            
+            if (response.ok) {
+                setQuiz({ titulo: "" }); 
+                setAlternativas([]);
+            }
     
         } catch (error) {
             console.error("Error al guardar evaluación:", error);
