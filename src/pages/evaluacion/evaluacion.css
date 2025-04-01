@@ -87,13 +87,9 @@
     text-align: center;
     place-content: center;
 }
-.correcta {
-    background-color: rgba(30, 216, 30, 0.726);
+.seleccionada {
+    background-color: rgb(36, 150, 243);
     color: white;
   }
   
-.incorrecta {
-    background-color: rgba(240, 52, 52, 0.781);
-    color: white;
-  }
   

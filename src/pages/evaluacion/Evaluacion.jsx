@@ -5,8 +5,7 @@ const Evaluacion = () =>{
     const [evaluacion,setEvaluacion] =useState([]);
     const [alternativa,setAlternativas] = useState([]);
     const [evaluacionClick,setEvaluacionClick] =useState(null);
-    const [respuestaSeleccionada, setRespuestaSeleccionada] = useState(null);
-
+    const [respuestaSeleccionada,setRespuestaSeleccionada] = useState(null)
 
     useEffect(() =>{
         const token = localStorage.getItem("token");
@@ -64,7 +63,7 @@ const Evaluacion = () =>{
         }
     }
 
-    const respuesta = (alt) =>{
+    const respuesta = async (alt) =>{
         setRespuestaSeleccionada(alt.id);
         
     }
@@ -94,7 +93,7 @@ const Evaluacion = () =>{
                             <h3>{evaluacionClick.titulo}</h3>
                             <div className='sub-alt'>
                                 {alternativa.map((alt) => (
-                                    <div key={alt.id} className={`alt ${respuestaSeleccionada === alt.id ? (alt.seleccionada ? "correcta" : "incorrecta") : ""}`} onClick={() => respuesta(alt)}>{alt.texto}</div>
+                                    <div key={alt.id} className={`alt ${respuestaSeleccionada === alt.id ? "seleccionada" : ""}`} onClick={() => respuesta(alt)}>{alt.texto}</div>
                                 ))}
                             </div>
                             
