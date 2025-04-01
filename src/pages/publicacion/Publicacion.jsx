@@ -27,6 +27,8 @@ const Publicacion = () => {
     const [participantesSeleccionados, setParticipantesSeleccionados] = useState([]);
     const [alternativas, setAlternativas] = useState([]);
     const [cargando, setCargando] = useState(false);
+    const [evaluaciones, setEvaluaciones] = useState([]);
+
     const [formData, setFormData] = useState({
         titulo: "",
         descripcion: "",
@@ -265,8 +267,12 @@ const Publicacion = () => {
                     alternativas: alternativas
                 })
             });
+            const data = await response.json();
+            
             
             if (response.ok) {
+                setEvaluaciones(preEvaluaciones=>[...preEvaluaciones,data]);
+                
                 setQuiz({ titulo: "" }); 
                 setAlternativas([]);
             }
@@ -516,6 +522,12 @@ const Publicacion = () => {
                                     
                                      </div>
                             </div>
+                            <div>{evaluaciones.map((p) =>(
+                                <li>
+                                    <ul>{p.titulo}</ul>
+                                    </li>
+                            ))}
+                                </div>
                             
                         </div>
                         <div className='participantes'>

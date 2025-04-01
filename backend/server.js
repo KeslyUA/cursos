@@ -379,6 +379,36 @@ app.post("/participantesAgregados",async(req,res) =>{
   }
 })
 
+//evaluaciones
+
+app.get("/evaluaciones", async (req, res) => {
+  try {
+    const evaluaciones = await prisma.pregunta.findMany();
+    res.json(evaluaciones); 
+  } catch (error) {
+  console.error("Error en la consulta de evaluacion:", error); 
+  res.status(500).json({ error: error.message }); 
+  }
+});
+//traer alternativas
+app.get("/alternativas", async (req, res) => {
+  try {
+    const { idPreguntas } = req.query; 
+
+    let alternativas;
+    if (idPreguntas) {
+      alternativas = await prisma.alternativa.findMany({
+        where: { idPreguntas: parseInt(idPreguntas) } 
+      });
+    } 
+
+    res.json(alternativas);
+  } catch (error) {
+    console.error("Error en la consulta de alternativas:", error);
+    res.status(500).json({ error: "Error al obtener alternativas" });
+  }
+});
+
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
