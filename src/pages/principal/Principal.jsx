@@ -46,7 +46,7 @@ const saludo =()=>{
             </RutaProtegida>}> 
       </Route>
       <Route path='/Evaluacion' element={
-        <RutaProtegida rolesPermitidos={["administrador"]}>
+        <RutaProtegida rolesPermitidos={["administrador","trabajador"]}>
           <Evaluacion></Evaluacion>
 
       </RutaProtegida>}>

@@ -33,7 +33,7 @@ api.interceptors.response.use(
     if (error.response && error.response.status === 401) {
       alert("Tu sesión ha expirado. Por favor, inicia sesión nuevamente.");
       localStorage.removeItem("token"); 
-      window.location.href = "/login"; 
+      window.location.href = "/explorar"; 
     }
     return Promise.reject(error);
   }
@@ -224,7 +224,7 @@ app.get("/publicaciones", verificarToken(["administrador", "trabajador"]), async
 });
 
 //obtener participantes
-app.get("/participantes", async (req, res) => {
+app.get("/usuarios", async (req, res) => {
   try {
     const participantes = await prisma.usuarios.findMany();
     res.json(participantes); 
@@ -378,13 +378,37 @@ app.post("/participantesAgregados",async(req,res) =>{
       res.status(500).json({message:"error al guardar participantes"})
   }
 })
+//participantes
+app.get("/participantes", async (req, res) => {
+  try {
+    const participantes = await prisma.participante.findMany();
+    res.json(participantes); 
+  } catch (error) {
+  console.error("Error en la consulta de participantes:", error); 
+  res.status(500).json({ error: error.message }); 
+  }
+});
 
 //evaluaciones
 
-app.get("/evaluaciones", async (req, res) => {
+app.get("/preguntas",async (req, res) => {
   try {
-    const evaluaciones = await prisma.pregunta.findMany();
+    const token = req.headers.authorization?.split(" ")[1];
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || "secreto_super_seguro");console.log("decode",decoded)
+    const userId = decoded.id;
+    const participantes = await prisma.participante.findMany({
+      where: { idUsuario: userId },
+      select: { idCurso: true }
+    });
+
+    const cursosIds = participantes.map((p) => p.idCurso); 
+    const evaluaciones = await prisma.pregunta.findMany({
+      where: { idCurso: { in: cursosIds }, },
+    });
     res.json(evaluaciones); 
+    
+    
+    console.log("nose",evaluaciones)
   } catch (error) {
   console.error("Error en la consulta de evaluacion:", error); 
   res.status(500).json({ error: error.message }); 

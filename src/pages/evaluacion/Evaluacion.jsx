@@ -9,7 +9,9 @@ const Evaluacion = () =>{
 
     useEffect(() =>{
         const token = localStorage.getItem("token");
-        fetch("http://localhost:3001/evaluaciones", {
+        console.log("token",token)
+
+        fetch("http://localhost:3001/preguntas", {
             method: "GET",
             headers: {
               "Content-Type": "application/json",
@@ -18,6 +20,7 @@ const Evaluacion = () =>{
           })
           .then((response) => response.json())
           .then((data) => {
+            console.log("Respuesta del servidor:", data); 
             setEvaluacion(Array.isArray(data) ? data : []); 
         })
              
@@ -25,15 +28,17 @@ const Evaluacion = () =>{
        
     
     },[]);
+
+
     
 
     const mostrarEvaluacion = async (id) =>{
         try{
             const token = localStorage.getItem("token");
-            const respuesta = await fetch(" http://localhost:3001/evaluaciones",{
+            const respuesta = await fetch(" http://localhost:3001/preguntas",{
                 method: "GET",
               headers: {
-               "Authorization": `Bearer ${token}`,
+                "Authorization": `Bearer ${token}`,
                 "Content-Type": "application/json",
               },
             })

@@ -32,7 +32,7 @@ export default function AgregarParticipantes({open,onClose,onSeleccionarParticip
      //obtener participantes
      const obtenerParticipantes = async () =>{
         try {
-            const response = await fetch("http://localhost:3001/participantes", {
+            const response = await fetch("http://localhost:3001/usuarios", {
               method: "GET",
               headers: {
                "Authorization": `Bearer ${localStorage.getItem("token")}`,
