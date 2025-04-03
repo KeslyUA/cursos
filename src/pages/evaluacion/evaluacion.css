@@ -16,11 +16,10 @@
     margin-top:40px;
     place-items: center;
     justify-content: center;
-    gap: 45px;
+    gap: 60px;
 }
 
 .cont-evaluacion{
-    border-radius: 20px;
     width: 50vh;
     height: 80px;
     background-color: rgb(255, 255, 255);
@@ -35,12 +34,9 @@
     font-size: 20px;
     text-align: center;
     place-content: center;
+    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.3);
 }
-.titulo-e{
-    margin-top: 100px;
-  color: rgb(28, 29, 31);
 
-}
 .contenido-e{
     display: flex;
     flex-direction: column;
@@ -48,48 +44,12 @@
     height: 80vh;
     place-items: center;
     justify-content: center;
-    gap: 10px;
+    gap: 20px;
     overflow-y: auto;
 
 }
-.cont-segundario{
-    width: 125vh;
-    height: 80vh;
-    background-color: rgba(255, 255, 255, 0.555);
-    border-radius: 20px;
-    place-items: center;
-}
-.preguntas{
-    display: flex;
-    place-items: center;
-    flex-direction: column;
-    font-family: "Roboto", sans-serif;
-    font-optical-sizing: auto;
-    font-weight: 00;
-    font-style: normal;
-    font-variation-settings:
-    "wdth" 100;
-    font-size: 30px;
-}
-.sub-alt{
-    display:  flex;
-    flex-direction: column;
-    gap: 20px;
-    
-}
 
-.alt{
-    width: 350px;
-    height: 80px;
-    background-color: rgb(255, 255, 255);
-    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.3);
-    border-radius: 10px;
-    text-align: center;
-    place-content: center;
-}
-.seleccionada {
-    background-color: rgb(36, 150, 243);
-    color: white;
-  }
-  
+
+
+
   

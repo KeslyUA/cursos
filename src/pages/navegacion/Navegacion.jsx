@@ -29,17 +29,17 @@ const paginasProtegidas={
  
   ['Cursos','cursos'],
 ['Publicacion','publicacion'],
-['Evaluacion','evaluacion']
-
+['Evaluacion','evaluacion'],
+['Pregunta','pregunta']
 ],
 usuario:[
   ['Cursos','cursos'],
-  ['Evaluacion','evaluacion']
+  ['Evaluacion','evaluacion'],
+  ['Pregunta','pregunta']
 ]};
 
 function ResponsiveAppBar() {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
-  const [anchorElUser, setAnchorElUser] = React.useState(null);
   const [abrirLogin, setabrirLogin] = React.useState(false); 
   const [isAuthenticated, setIsAuthenticated] = React.useState( !!localStorage.getItem("token"));
   //cargo de persona para ocultar rutas
@@ -71,7 +71,7 @@ function ResponsiveAppBar() {
   const navigate = useNavigate();
 
   const pages = isAuthenticated
-  ? [...paginasPublicas, ...paginasProtegidas[cargo === "administrador" ? "administrador" : "usuario"]]
+  ? [...paginasPublicas, ...paginasProtegidas[cargo === "administrador" ? "administrador" : "usuario"] .filter(([nombre]) => nombre !== "Pregunta")]
   : paginasPublicas;
   return (
     <React.Fragment>

@@ -7,7 +7,8 @@ import Explorar from '../explorar/Explorar';
 import Cursos from '../cursos/Cursos';
 import Publicacion from '../publicacion/Publicacion';
 import Evaluacion from '../evaluacion/Evaluacion';
-/* import RutaProtegida from './RutaProgida'; */
+import Pregunta from '../Pregunta/Pregunta';
+
 const RutaProtegida = ({ children, rolesPermitidos }) => {
   const token = localStorage.getItem("token");
   const cargo = localStorage.getItem("cargo");
@@ -41,8 +42,10 @@ const saludo =()=>{
             </RutaProtegida>
           }
         />
-      <Route path="/Publicacion" element={<RutaProtegida rolesPermitidos={["administrador"]}>
-              <Publicacion />
+      <Route path="/Publicacion" 
+      element={
+      <RutaProtegida rolesPermitidos={["administrador"]}>
+            <Publicacion />
             </RutaProtegida>}> 
       </Route>
       <Route path='/Evaluacion' element={
@@ -51,6 +54,13 @@ const saludo =()=>{
 
       </RutaProtegida>}>
       </Route> 
+
+      <Route path='/Pregunta/:id' element={
+        <RutaProtegida  rolesPermitidos={["administrador","trabajador"]}>
+          <Pregunta></Pregunta>
+        </RutaProtegida>
+      } />
+      
       
     </Routes>
    

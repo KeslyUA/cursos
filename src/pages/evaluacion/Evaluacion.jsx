@@ -1,12 +1,16 @@
 import '../evaluacion/evaluacion.css'
 import React, { useEffect, useState } from 'react';
+import Checkbox from '@mui/material/Checkbox';
+import Button from '@mui/material/Button';
+import { useNavigate } from 'react-router';
+
 const Evaluacion = () =>{
 
     const [evaluacion,setEvaluacion] =useState([]);
-    const [alternativa,setAlternativas] = useState([]);
-    const [evaluacionClick,setEvaluacionClick] =useState(null);
-    const [respuestaSeleccionada,setRespuestaSeleccionada] = useState(null)
 
+
+    const navegar = useNavigate()
+   
     useEffect(() =>{
         const token = localStorage.getItem("token");
         console.log("token",token)
@@ -30,50 +34,10 @@ const Evaluacion = () =>{
     },[]);
 
 
+    const preguntas = (id) => {
+        navegar(`/Pregunta/${id}`)
+    }
     
-
-    const mostrarEvaluacion = async (id) =>{
-        try{
-            const token = localStorage.getItem("token");
-            const respuesta = await fetch(" http://localhost:3001/preguntas",{
-                method: "GET",
-              headers: {
-                "Authorization": `Bearer ${token}`,
-                "Content-Type": "application/json",
-              },
-            })
-            
-            const data= await respuesta.json();
-            const evaluacionSeleccionada = data.find(e => e.id === id);
-
-            if(evaluacionSeleccionada){
-                setEvaluacionClick(evaluacionSeleccionada);
-
-                const respuestaAlternativas = await fetch(`http://localhost:3001/alternativas?idPreguntas=${id}`, {
-                    method: "GET",
-                    headers: {
-                        "Authorization": `Bearer ${token}`,
-                        "Content-Type": "application/json",
-                    },
-                });
-
-                const dataAlternativas = await respuestaAlternativas.json();
-                setAlternativas(Array.isArray(dataAlternativas) ? dataAlternativas : []);
-            }
-            
-            
-
-        }catch (error) {
-            console.error("Error al obtener evaluación:", error);
-        }
-    }
-
-    const respuesta = async (alt) =>{
-        setRespuestaSeleccionada(alt.id);
-        
-    }
-     
-
     return(
         
         <div className='fondo-evaluacion'>
@@ -85,27 +49,14 @@ const Evaluacion = () =>{
                 <div className='contenido-e'>
                     {evaluacion.map((p) => (
                         
-                            <div key={p.id} className='cont-evaluacion' onClick={() => mostrarEvaluacion(p.id)}>
-                                <div >{p.titulo}</div>
+                            <div key={p.id} className='cont-evaluacion' onClick={() =>preguntas (p.id)}>
+                                <div >{p.curso.titulo}</div>
                             </div>
                             
                         
                     ))}
                 </div>
-                <div className='cont-segundario'>
-                {evaluacionClick && (
-                        <div className='preguntas'>
-                            <h3>{evaluacionClick.titulo}</h3>
-                            <div className='sub-alt'>
-                                {alternativa.map((alt) => (
-                                    <div key={alt.id} className={`alt ${respuestaSeleccionada === alt.id ? "seleccionada" : ""}`} onClick={() => respuesta(alt)}>{alt.texto}</div>
-                                ))}
-                            </div>
-                            
-                        </div>
-                    )}
-                </div>
-            
+                
             </div>
             
         </div>

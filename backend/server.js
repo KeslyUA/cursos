@@ -404,7 +404,13 @@ app.get("/preguntas",async (req, res) => {
     const cursosIds = participantes.map((p) => p.idCurso); 
     const evaluaciones = await prisma.pregunta.findMany({
       where: { idCurso: { in: cursosIds }, },
+      include: {
+        curso : {
+          select : {titulo:true}
+        }
+      }
     });
+    
     res.json(evaluaciones); 
     
     
