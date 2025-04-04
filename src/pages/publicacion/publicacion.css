@@ -219,6 +219,19 @@
     place-content: center;
     align-items: center;
 }
+.separador{
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+.deslizar{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+.itemalternativa{
+    display: flex;
+}
 @media(max-width: 820px){
     .contenedor-publicacion{
         display: flex;

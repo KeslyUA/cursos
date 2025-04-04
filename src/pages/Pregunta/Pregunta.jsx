@@ -8,11 +8,13 @@ import Button from '@mui/material/Button';
 const Pregunta =()=>{
     const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
     const {id} = useParams();
+    const idCurso = Number(id);
     console.log("ID recibido:", id);
     const [evaluacionClick, setEvaluacionClick] = useState(null);
     const [alternativa, setAlternativas] = useState([]);
     const [seleccionado, setSeleccionado] = useState(null);
-    const [resultado,setResultado] = useState(0)
+    const [resultado,setResultado] = useState(0);
+    const [puntaje,setPuntaje] = useState(0)
 
     const manejarSeleccion = (alt) => {
         if (seleccionado === alt.id) return; 
@@ -34,7 +36,7 @@ const Pregunta =()=>{
             });
     
             const data = await respuesta.json();
-            const evaluacionSeleccionada = data.find(e => e.id === parseInt(id));  // Busca por el id de la URL
+            const evaluacionSeleccionada = data.find(e => e.id === parseInt(id));  
     
             if (evaluacionSeleccionada) {
               setEvaluacionClick(evaluacionSeleccionada);
@@ -60,8 +62,94 @@ const Pregunta =()=>{
         }
       }, [id]);
 
-    
+      //puntajes
 
+      const GuardarPuntaje = async () =>{
+
+        try{
+            const respuesta= await fetch("http://localhost:3001/puntaje",{
+                      method: "POST",
+                      headers: {
+                          "Content-Type": "application/json",
+                          Authorization: `Bearer ${localStorage.getItem("token")}` 
+                      },
+                      body: JSON.stringify({
+                          idCurso:idCurso,
+                          puntaje:resultado
+                      })
+
+                    });console.log("puntaje",resultado)
+                    const data =await respuesta.json();
+                    
+                    if(respuesta.ok){
+                      alert("evaluacion guardada")
+                    }
+                    else{
+                      alert("no se guardo evaluacion")
+                    }
+                    console.log("data puntaje",data)
+                  
+        }catch (error) {
+          console.error("Error al guardar evaluacion", error);
+        }
+
+      }  
+
+      const ActualizarPuntaje = async (idPuntaje, resultado) => {
+        try {
+            const respuesta = await fetch(`http://localhost:3001/puntaje/${idPuntaje}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${localStorage.getItem("token")}`
+                },
+                body: JSON.stringify({
+                    puntaje: resultado
+                })
+            });
+    
+            const data = await respuesta.json();
+            if (respuesta.ok) {
+                alert("Puntaje actualizado correctamente");
+            } else {
+                alert("No se pudo actualizar el puntaje");
+            }
+            console.log("Puntaje actualizado:", data);
+            
+        } catch (error) {
+            console.error("Error al actualizar puntaje:", error);
+            alert("Error al actualizar puntaje");
+        }
+    };
+    
+    const GuardarOActualizarPuntaje = async () => {
+      try {
+        const token = localStorage.getItem("token");
+    const idUsuario = localStorage.getItem("idUsuario");
+    const idCurso = idCurso
+    
+        const respuesta = await fetch(`http://localhost:3001/puntaje/${idUsuario}/${idCurso}`, {
+          method: "GET",
+          headers: {
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+        const data = await respuesta.json();
+          console.log("data",data)
+        if (data=null) {
+          console.log("No existe puntaje, creando nuevo...");
+          await GuardarPuntaje();
+          
+        } else {
+          console.log("Ya existe puntaje, actualizando...");
+          await ActualizarPuntaje(data.id, resultado);
+        }
+      } catch (error) {
+        console.error("Error al guardar o actualizar puntaje:", error);
+      }
+    };
+    
     
     return(
         <div>
@@ -87,7 +175,7 @@ const Pregunta =()=>{
                                         </div>
                                    <div className='btn-guardar-respuesta'>
                                     <br />
-                                        <Button variant="contained" disableElevation>
+                                        <Button variant="contained" disableElevation onClick={GuardarOActualizarPuntaje}>
                                         Guardar Respuesta
                                         </Button>  
                                     </div>  

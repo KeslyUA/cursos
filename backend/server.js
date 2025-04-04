@@ -439,6 +439,80 @@ app.get("/alternativas", async (req, res) => {
   }
 });
 
+//guardar puntaje
+
+app.post("/puntaje",verificarToken(["administrador", "trabajador"]),async(req,res) => {
+  try{
+    const idUsuario = req.user.id; 
+    const {idCurso,puntaje} = req.body
+console.log("idu",idUsuario)
+    const subir = await prisma.puntaje.create({
+
+      data:{
+
+        idUsuario:idUsuario,
+        idCurso:idCurso,
+        puntaje:puntaje
+      },
+
+    }); console.log("datos subidos",subir)
+
+    res.json(subir);
+  }catch (error) {
+    console.error("Error al guardar el puntaje:", error.message, error.meta);
+    res.status(500).json({ error: error.message });
+  }
+}) 
+
+
+//actualizar puntaje 
+
+app.put("/puntaje/:id", verificarToken(["administrador", "trabajador"]), async (req, res) => {
+  try {
+      const { id } = req.params;
+      const { puntaje } = req.body; 
+
+      console.log("ID Puntaje:", id);
+      console.log("Nuevo Puntaje:", puntaje);
+
+      const actualizarPuntaje = await prisma.puntaje.update({
+          where: { id: Number(id) }, 
+          data: { puntaje: puntaje } 
+      });
+
+      res.json(actualizarPuntaje);
+  } catch (error) {
+      console.error("Error al actualizar puntaje:", error.message, error.meta);
+      res.status(500).json({ error: "Error en el servidor" });
+  }
+});
+
+//traer puntaje
+
+app.get("/puntaje/:idUsuario/:idCurso", async (req, res) => {
+  const { idUsuario, idCurso } = req.params;
+
+  try {
+    const puntajeExistente = await prisma.puntaje.findFirst({
+      where: {
+        idUsuario: Number(idUsuario),
+        idCurso: Number(idCurso),
+      },
+    });
+
+    if (puntajeExistente) {
+      res.json(puntajeExistente); console.log("trae puntaje",puntajeExistente)
+    } else {
+      res.status(404).json({ message: "No hay puntaje registrado" });
+    }
+  } catch (error) {
+    console.error("Error al buscar puntaje:", error);
+    res.status(500).json({ error: "Error en el servidor" });
+  }
+});
+
+
+
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {

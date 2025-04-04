@@ -478,7 +478,7 @@ const Publicacion = () => {
                                             <AddIcon />
                                             </Fab> 
                                         </div>
-                                        <div>
+                                        <div className='separador'>
                                             <div className='deslizar'>
                                                             {alternativas.length >= 4 && (
                                                         <Typography color="error" variant="body2">

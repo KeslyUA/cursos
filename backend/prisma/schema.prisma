@@ -18,6 +18,7 @@ model usuarios {
   agregados     agregados[]
   preguntas      pregunta[]
   participantes   participante[]
+  puntaje         puntaje[]
 }
 
 model cursos {
@@ -38,6 +39,7 @@ model cursos {
   agregados    agregados[]
   participantes participante[] 
   preguntas pregunta[] 
+  puntaje   puntaje[]
 
 }
 
@@ -76,4 +78,12 @@ model participante {
   usuario   usuarios @relation(fields: [idUsuario], references: [id], onDelete: Cascade)
   curso   cursos @relation(fields: [idCurso], references: [id], onDelete: Cascade)
 }
+ model puntaje {
+id  Int   @id @default(autoincrement())
+idUsuario   Int
+idCurso     Int
+puntaje     Int
 
+usuario   usuarios @relation(fields: [idUsuario], references: [id], onDelete: Cascade)
+curso   cursos @relation(fields: [idCurso], references: [id], onDelete: Cascade)
+ }
