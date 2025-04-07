@@ -2,11 +2,9 @@ import React from 'react';
 import './cursos.css'
 import { useEffect, useState,useRef } from "react";
 import Button from '@mui/material/Button';
-import misCursos from '../publicacion/Publicacion';
 
 const Cursos = ({ curso }) => {
     const [cursos, setCursos] = useState([]);
-    const [cursosSeleccionados, setCursosSeleccionados] = useState([]);
     const [videoSeleccionado,setVideoSeleccionado] = useState([]);
     const [misCursos,setMisCursos] =useState([]);
     const videoRefs = useRef({});
@@ -156,8 +154,8 @@ const Cursos = ({ curso }) => {
             if (tiempoAlmacenado) {
                 setTiempoGuardado(parseFloat(tiempoAlmacenado));
             }
-            if (videoRef.current) {
-                videoRef.current.currentTime = parseFloat(tiempoAlmacenado) || 0; 
+            if (videoRefs.current) {
+                videoRefs.current.currentTime = parseFloat(tiempoAlmacenado) || 0; 
             }
 
           }, [curso]);
