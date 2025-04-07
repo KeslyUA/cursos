@@ -17,9 +17,8 @@ const Pregunta =()=>{
     const [puntaje,setPuntaje] = useState(0)
 
     const manejarSeleccion = (alt) => {
-        if (seleccionado === alt.id) return; 
-        setSeleccionado(alt.id);  
-        setResultado(prev => prev + (alt.seleccionada ? 1 : 0));
+      setSeleccionado(alt.id); 
+      setResultado(alt.seleccionada ? 1 : 0); 
     };
       
   
