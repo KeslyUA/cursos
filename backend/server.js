@@ -472,9 +472,6 @@ app.put("/puntaje/:id", verificarToken(["administrador", "trabajador"]), async (
       const { id } = req.params;
       const { puntaje } = req.body; 
 
-      console.log("ID Puntaje:", id);
-      console.log("Nuevo Puntaje:", puntaje);
-
       const actualizarPuntaje = await prisma.puntaje.update({
           where: { id: Number(id) }, 
           data: { puntaje: puntaje } 
@@ -490,15 +487,15 @@ app.put("/puntaje/:id", verificarToken(["administrador", "trabajador"]), async (
 //traer puntaje
 
 app.get("/puntaje/:idUsuario/:idCurso", async (req, res) => {
-  const { idUsuario, idCurso } = req.params;
+  
 
   try {
+    const { idUsuario,idCurso} = req.params;
+    
     const puntajeExistente = await prisma.puntaje.findFirst({
-      where: {
-        idUsuario: Number(idUsuario),
-        idCurso: Number(idCurso),
+      where: {idUsuario: Number(idUsuario),idCurso:Number(idCurso) }
       },
-    });
+    ); console.log("iddd",puntajeExistente)
 
     if (puntajeExistente) {
       res.json(puntajeExistente); console.log("trae puntaje",puntajeExistente)

@@ -13,7 +13,7 @@ const Evaluacion = () =>{
    
     useEffect(() =>{
         const token = localStorage.getItem("token");
-        console.log("token",token)
+        
 
         fetch("http://localhost:3001/preguntas", {
             method: "GET",
@@ -24,7 +24,8 @@ const Evaluacion = () =>{
           })
           .then((response) => response.json())
           .then((data) => {
-            console.log("Respuesta del servidor:", data); 
+            
+            console.log("Respuesta del servidor:", data);
             setEvaluacion(Array.isArray(data) ? data : []); 
         })
              
@@ -35,7 +36,9 @@ const Evaluacion = () =>{
 
 
     const preguntas = (id) => {
-        navegar(`/Pregunta/${id}`)
+        const pregunta = evaluacion.find((p) => p.id === id);
+        const idUsuario = pregunta?.idUsuario;
+        navegar(`/Pregunta/${id}/${idUsuario}`)
     }
     
     return(

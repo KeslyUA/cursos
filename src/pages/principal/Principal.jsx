@@ -55,7 +55,7 @@ const saludo =()=>{
       </RutaProtegida>}>
       </Route> 
 
-      <Route path='/Pregunta/:id' element={
+      <Route path='/Pregunta/:id/:idUsuario' element={
         <RutaProtegida  rolesPermitidos={["administrador","trabajador"]}>
           <Pregunta></Pregunta>
         </RutaProtegida>

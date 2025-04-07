@@ -7,9 +7,9 @@ import Button from '@mui/material/Button';
 
 const Pregunta =()=>{
     const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
-    const {id} = useParams();
+    const {id,idUsuario} = useParams();
     const idCurso = Number(id);
-    console.log("ID recibido:", id);
+    const iduser =Number(idUsuario);console.log("uu",iduser)
     const [evaluacionClick, setEvaluacionClick] = useState(null);
     const [alternativa, setAlternativas] = useState([]);
     const [seleccionado, setSeleccionado] = useState(null);
@@ -41,7 +41,7 @@ const Pregunta =()=>{
             if (evaluacionSeleccionada) {
               setEvaluacionClick(evaluacionSeleccionada);
     
-              const respuestaAlternativas = await fetch(`http://localhost:3001/alternativas?idPreguntas=${id}`, {
+              const respuestaAlternativas = await fetch(`http://localhost:3001/alternativas?idPreguntas=${id}/${iduser}`, {
                 method: "GET",
                 headers: {
                   "Authorization": `Bearer ${token}`,
@@ -75,6 +75,7 @@ const Pregunta =()=>{
                       },
                       body: JSON.stringify({
                           idCurso:idCurso,
+                
                           puntaje:resultado
                       })
 
@@ -95,9 +96,9 @@ const Pregunta =()=>{
 
       }  
 
-      const ActualizarPuntaje = async (idPuntaje, resultado) => {
+      const ActualizarPuntaje = async (id, resultado) => {
         try {
-            const respuesta = await fetch(`http://localhost:3001/puntaje/${idPuntaje}`, {
+            const respuesta = await fetch(`http://localhost:3001/puntaje/${id}`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
@@ -125,8 +126,9 @@ const Pregunta =()=>{
     const GuardarOActualizarPuntaje = async () => {
       try {
         const token = localStorage.getItem("token");
-    const idUsuario = localStorage.getItem("idUsuario");
-    const idCurso = idCurso
+    const idUsuario = iduser;
+    const idCurso = id
+    
     
         const respuesta = await fetch(`http://localhost:3001/puntaje/${idUsuario}/${idCurso}`, {
           method: "GET",
@@ -134,17 +136,18 @@ const Pregunta =()=>{
             "Authorization": `Bearer ${token}`,
             "Content-Type": "application/json",
           },
+          
         });
         const data = await respuesta.json();
-          console.log("data",data)
-        if (data=null) {
-          console.log("No existe puntaje, creando nuevo...");
-          await GuardarPuntaje();
+          console.log("data del server",data)
+          if (data && data.id) {
+            console.log("Ya existe puntaje, actualizando...");
+            await ActualizarPuntaje(data.id, resultado);
+          } else {
+            console.log("No existe puntaje, creando nuevo...");
+            await GuardarPuntaje();
+          }
           
-        } else {
-          console.log("Ya existe puntaje, actualizando...");
-          await ActualizarPuntaje(data.id, resultado);
-        }
       } catch (error) {
         console.error("Error al guardar o actualizar puntaje:", error);
       }
