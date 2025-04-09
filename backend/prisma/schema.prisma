@@ -29,10 +29,10 @@ model cursos {
   duracion     String?   @db.VarChar(50)
   fechaPublica DateTime? @db.DateTime(0)
   fechaCierre  DateTime? @db.DateTime(0)
-  certificado  String?   @db.VarChar(50)
-  cursoLibre   String?   @db.VarChar(50)
-  evaluacion   String?   @db.VarChar(50)
-  obligatorio  String?   @db.VarChar(50)
+  certificado  Int
+  cursoLibre   Int
+  evaluacion   Int
+  obligatorio  Int
   videoURL      String?
   idUsuario     Int  
   usuario     usuarios @relation(fields: [idUsuario], references: [id], onDelete: Cascade)

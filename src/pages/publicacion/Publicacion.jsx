@@ -16,6 +16,8 @@ import Checkbox from '@mui/material/Checkbox';
 import AgregarParticipantes from '../dialogo/agregarParticipantes/AgregarParticipates';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import CircularProgress from '@mui/material/CircularProgress';
+
+import Radio from '@mui/material/Radio';
 import agregarSeleccionados from '../dialogo/agregarParticipantes/AgregarParticipates'
 
 const Publicacion = () => {
@@ -36,12 +38,12 @@ const Publicacion = () => {
         duracion: "",
         fechaPublica: "",
         fechaCierre: "",
-        certificado: "",
-        cursoLibre: "",
-        evaluacion: "",
-        obligatorio: "",
+        certificado: 0,
+        cursoLibre: 0,
+        evaluacion: 0,
+        obligatorio:0,
         setVideoURL:""
-    });
+    });console.log("cur",formData)
 
     const selectorCurso = (curso) => {
         setFormData({
@@ -149,10 +151,10 @@ const Publicacion = () => {
                 duracion: "",
                 fechaPublica: "",
                 fechaCierre: "",
-                certificado: "",
-                cursoLibre: "",
-                evaluacion: "",
-                obligatorio: "",
+                certificado:0,
+                cursoLibre: 0,
+                evaluacion: 0,
+                obligatorio: 0,
             });
             
 
@@ -386,23 +388,67 @@ const Publicacion = () => {
                                             />
                                         </LocalizationProvider>
                                         <Box sx={{ width: 500, maxWidth: '30%' }}>
-                                            <TextField fullWidth label="Certificado" id="Certificado" className='itemcolor'  name='certificado' value={formData.certificado} onChange={handleChange}/>
+                                        <FormControlLabel className='color'
+                                            control={
+                                            <Checkbox
+                                                checked={formData.certificado === 1}
+                                                onChange={(e) =>
+                                                setFormData({ ...formData, certificado: e.target.checked ? 1 : 0 })
+                                                }
+                                            />
+                                            }
+                                            label="Certificado"
+                                        />
+                                            </Box>
+                                        <Box sx={{ width: 500, maxWidth: '30%' }}>
+                                            <FormControlLabel className='color'
+                                                control={
+                                                <Checkbox
+                                                    checked={formData.cursoLibre === 1}
+                                                    onChange={(e) =>
+                                                    setFormData({ ...formData, cursoLibre: e.target.checked ? 1 : 0 })
+                                                    }
+                                                />
+                                                }
+                                                label="Curso Libre"
+                                            />
                                         </Box>
                                         <Box sx={{ width: 500, maxWidth: '30%' }}>
-                                            <TextField fullWidth label="Curso Libre" id="CursoLibre" className='itemcolor'  name='cursoLibre' value={formData.cursoLibre} onChange={handleChange}/>
+                                        <FormControlLabel className='color'
+                                                control={
+                                                <Checkbox
+                                                    checked={formData.evaluacion === 1}
+                                                    onChange={(e)=>
+                                                    setFormData({ ...formData, evaluacion: e.target.checked ? 1 : 0 })
+                                                    }
+                                                />
+                                                }
+                                                label="Evaluación"
+                                            />    
                                         </Box>
                                         <Box sx={{ width: 500, maxWidth: '30%' }}>
-                                            <TextField fullWidth label="Evaluacion" id="Evaluacion" className='itemcolor'  name='evaluacion' value={formData.evaluacion} onChange={handleChange} />
-                                        </Box>
-                                        <Box sx={{ width: 500, maxWidth: '30%' }}>
-                                            <TextField fullWidth label="Obligatorio" id="Obligatorio" className='itemcolor'  name='obligatorio' value={formData.obligatorio} onChange={handleChange}/>
+                                        <FormControlLabel className='color'
+                                                control={
+                                                <Checkbox
+                                                    checked={formData.obligatorio === 1}
+                                                    onChange={(e) =>
+                                                    setFormData({ ...formData, obligatorio: e.target.checked ? 1 : 0 })
+                                                    }
+                                                />
+                                                }
+                                                label="Obligatorio"
+                                            />      
                                         </Box>
                                         
                                   
                                         
                         </div>
+                        <div className='agregar'>
+                            agregar participantes
+                        </div>
                         
                         </div>
+                        
                         <div className='box-videos'>
                             
                             <div className='video'>
@@ -456,6 +502,7 @@ const Publicacion = () => {
                          
                          
                     </div>
+                    
 
                     </div>
                     <div className='contenedor-inferior'>
