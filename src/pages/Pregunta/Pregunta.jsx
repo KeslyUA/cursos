@@ -4,6 +4,7 @@ import { useParams } from 'react-router';
 import { useState, useEffect } from "react";
 import Checkbox from '@mui/material/Checkbox';
 import Button from '@mui/material/Button';
+import MaxWidthDialog from '../dialogo/puntaje/Puntaje'
 
 const Pregunta =()=>{
     const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
@@ -14,13 +15,17 @@ const Pregunta =()=>{
     const [alternativa, setAlternativas] = useState([]);
     const [seleccionado, setSeleccionado] = useState(null);
     const [resultado,setResultado] = useState(0);
-    const [puntaje,setPuntaje] = useState(0)
+    const [puntaje,setPuntaje] = useState(0);
+    const [open, setOpen] = React.useState(false);
 
     const manejarSeleccion = (alt) => {
       setSeleccionado(alt.id); 
       setResultado(alt.seleccionada ? 1 : 0); 
     };
       
+    const handleClickOpen = () => {
+      setOpen(true);
+    };
   
     useEffect(() => {
         const mostrarEvaluacion = async () => {
@@ -179,11 +184,15 @@ const Pregunta =()=>{
                                     <br />
                                         <Button variant="contained" disableElevation onClick={GuardarOActualizarPuntaje}>
                                         Guardar Respuesta
-                                        </Button>  
+                                        </Button> 
+                                        <Button variant="outlined" onClick={handleClickOpen}>
+                                        Open max-width dialog
+                                      </Button> 
                                     </div>  
                                     <h4>Resultado: {resultado }</h4>   
                          </div>
-                    
+                     <MaxWidthDialog open={open} onClose={() => setOpen(false)}/>
+                                
         </div>
     )
 

@@ -443,9 +443,7 @@ const Publicacion = () => {
                                   
                                         
                         </div>
-                        <div className='agregar'>
-                            agregar participantes
-                        </div>
+                        
                         
                         </div>
                         
@@ -579,18 +577,16 @@ const Publicacion = () => {
                         </div>
                         <div className='participantes'>
                                <p className='text-pregunta'>Participantes</p>
-                               <div className='boton-par'>
-                                <Button variant="outlined" size="small" className='agregar-boton' onClick={abrirDialogoParticipantes}>
+                              <Button variant="outlined" size="small"  onClick={abrirDialogoParticipantes}>
                                 agregar
                                 </Button>
-                               </div>
                                <div className='base-lista'>
                                  {participantesSeleccionados.map((p,item) => (
                                     
                                     <div key={p.id} className='par-agregado'><p className='nombre-usuario'>{p.usuario}</p><DeleteForeverIcon onClick={() => eliminarItem(item.id)} /></div>
                                 ))}
                                </div>
-                              
+                               
                                  
                            
                         </div>
