@@ -189,9 +189,9 @@ const Pregunta =()=>{
                                         Open max-width dialog
                                       </Button> 
                                     </div>  
-                                    <h4>Resultado: {resultado }</h4>   
+                                     
                          </div>
-                     <MaxWidthDialog open={open} onClose={() => setOpen(false)}/>
+                     <MaxWidthDialog open={open} onClose={() => setOpen(false)} puntaje={resultado}/>
                                 
         </div>
     )
