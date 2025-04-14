@@ -450,7 +450,7 @@ const Publicacion = () => {
                         <div className='box-videos'>
                             
                             <div className='video'>
-                                <p className='fuente'>Video</p>
+                                <p className='fuente'>VIDEO</p>
                         <div className='video-cont'>
                             <input
                                 type="file"
@@ -510,11 +510,16 @@ const Publicacion = () => {
                             </style>
 
                             <p className='text-pregunta'>Evaluacion</p>
+                            <div className='btn-espacio'>
+                                <Button variant="contained" size="medium" onClick={() => guardarEvaluacion(data.id)} >
+                                         Agregar
+                            </Button>
+                            </div>
+                            
                             <div className='pregunta'>
                                 <p className='text-pregunta'>Pregunta N° 1</p>
                                 <div className='alternativas'>
-                                    <TextField id="filled-basic"  label="Titulo" variant="filled" name='titulo' value={quiz.titulo} onChange={funcionchance}/>
-                                    <br />
+                                    <TextField id="filled-basic"  label="Titulo" variant="filled" name='titulo' className='itemtitulo' value={quiz.titulo} onChange={funcionchance}/>
                                     <br />
                                     <div className='agregar'>
                                         
@@ -525,11 +530,6 @@ const Publicacion = () => {
                                         </div>
                                         <div className='separador'>
                                             <div className='deslizar'>
-                                                            {alternativas.length >= 4 && (
-                                                        <Typography color="error" variant="body2">
-                                                        Límite de alternativas alcanzado
-                                                        </Typography>
-                                                    )}
                                                     
                                                         {alternativas.map((alt, index) => (
                                                             <div key={index} className='itemalternativa'>
@@ -538,7 +538,7 @@ const Publicacion = () => {
                                                             value={alternativas[index].texto}
                                                             onChange={(event) => actualizaralternativa(index, event)}
                                                             variant="filled"
-                                                            fullWidth
+                                                            className='itemalt'
                                                         />
                                                         <FormControlLabel
                                                             control={
@@ -554,12 +554,6 @@ const Publicacion = () => {
                                                     
                                                 ))}
                                             </div>
-                                        
-                                    <div >
-                                         <Button variant="outlined" size="medium" onClick={() => guardarEvaluacion(data.id)}>
-                                         Agregar
-                                        </Button>
-                                    </div>
                                    
                                         </div>
                                     
@@ -576,14 +570,20 @@ const Publicacion = () => {
                             
                         </div>
                         <div className='participantes'>
+                        <style>
+                            @import url('https://fonts.googleapis.com/css2?family=Bungee+Spice&family=Cabin:ital,wght@0,400..700;1,400..700&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Mulish:ital,wght@0,200..1000;1,200..1000&family=Open+Sans:ital,wdth,wght@0,85.7,300;1,85.7,300&family=Public+Sans:ital,wght@0,100..900;1,100..900&family=Roboto+Condensed:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&family=Winky+Rough:ital,wght@0,300..900;1,300..900&display=swap');
+                        </style>
                                <p className='text-pregunta'>Participantes</p>
-                              <Button variant="outlined" size="small"  onClick={abrirDialogoParticipantes}>
+                               <div className='btn-espacio'>
+                                <Button variant="contained" size="small"  onClick={abrirDialogoParticipantes} >
                                 agregar
                                 </Button>
+                               </div>
+                              
                                <div className='base-lista'>
                                  {participantesSeleccionados.map((p,item) => (
                                     
-                                    <div key={p.id} className='par-agregado'><p className='nombre-usuario'>{p.usuario}</p><DeleteForeverIcon onClick={() => eliminarItem(item.id)} /></div>
+                                    <div key={p.id} className='par-agregado'><p className='nombre-usuario'>{p.usuario}</p><DeleteForeverIcon onClick={() => eliminarItem(p.id)} /></div>
                                 ))}
                                </div>
                                

@@ -33,12 +33,15 @@ const Evaluacion = () =>{
        
     
     },[]);
+    const cursosUnicos = Array.from(
+        new Map(evaluacion.map((p) => [p.idCurso, p])).values()
+      );
 
 
-    const preguntas = (id) => {
-        const pregunta = evaluacion.find((p) => p.id === id);
+    const preguntas = (idCurso) => {
+        const pregunta = evaluacion.find((p) => p.idCurso === idCurso);
         const idUsuario = pregunta?.idUsuario;
-        navegar(`/Pregunta/${id}/${idUsuario}`)
+        navegar(`/Pregunta/${idCurso}/${idUsuario}`)
     }
     
     return(
@@ -50,9 +53,9 @@ const Evaluacion = () =>{
             
             <div className='cont-supeva'>
                 <div className='contenido-e'>
-                    {evaluacion.map((p) => (
+                    {cursosUnicos.map((p) => (
                         
-                            <div key={p.id} className='cont-evaluacion' onClick={() =>preguntas (p.id)}>
+                            <div key={p.idCurso} className='cont-evaluacion' onClick={() =>preguntas (p.idCurso)}>
                                 <div >{p.curso.titulo}</div>
                             </div>
                             

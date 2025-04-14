@@ -1,5 +1,5 @@
 .fondo-cursos{
-    background-color: #6a80fc;
+    background: linear-gradient(to bottom right, rgb(44, 192, 236), pink);
     height: 100%;
     width:100% ;
     place-items: center;
@@ -159,6 +159,12 @@ align-items: center;
     width: 90%;
     height: 20%;
     font-size: 15px;
+    font-family: "Roboto Condensed", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+    margin-top: 5px;
+    text-align: center;
 }
 .segundario{
     width: 50%;

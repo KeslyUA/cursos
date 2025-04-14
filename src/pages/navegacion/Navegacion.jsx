@@ -75,7 +75,7 @@ function ResponsiveAppBar() {
   : paginasPublicas;
   return (
     <React.Fragment>
-      <AppBar position="static" sx={{backgroundColor:'#1d1542cc'}}>              
+      <AppBar position="static" sx={{backgroundColor:'#4573c2'}}>              
         <Container maxWidth="xl">
           <Toolbar disableGutters>
             <HomeIcon fontSize="small" sx={{ display: { xs: 'none', md: 'flex' }, mr: 1, color:'#16eca5cc'}} />

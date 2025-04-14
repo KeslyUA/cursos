@@ -1,5 +1,5 @@
 .fondo-evaluacion{
-    background-color: #6a80fc;
+    background: linear-gradient(to bottom right, rgb(44, 192, 236), pink);
     width: 100%;
     height: 100vh;
     display: flex;

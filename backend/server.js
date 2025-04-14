@@ -423,16 +423,11 @@ app.get("/preguntas",async (req, res) => {
 //traer alternativas
 app.get("/alternativas", async (req, res) => {
   try {
-    const { idPreguntas } = req.query; 
+    
+    const  alternativas = await prisma.alternativa.findMany();
+    
 
-    let alternativas;
-    if (idPreguntas) {
-      alternativas = await prisma.alternativa.findMany({
-        where: { idPreguntas: parseInt(idPreguntas) } 
-      });
-    } 
-
-    res.json(alternativas);
+    res.json(alternativas);console.log("alternativasd",alternativas)
   } catch (error) {
     console.error("Error en la consulta de alternativas:", error);
     res.status(500).json({ error: "Error al obtener alternativas" });
