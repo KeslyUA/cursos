@@ -1,0 +1,8 @@
+.fondo-modal{
+    width:70vh;
+    height: 60vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
