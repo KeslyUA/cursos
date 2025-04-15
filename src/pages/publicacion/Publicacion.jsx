@@ -308,11 +308,14 @@ const Publicacion = () => {
         setAlternativas(nuevasAlternativas);
       };
     
-      const filaCheckbox = (index) => {
-        const nuevasAlternativas = [...alternativas];
-        nuevasAlternativas[index].seleccionada = !nuevasAlternativas[index].seleccionada;
+      const filaCheckbox = (indexSeleccionado) => {
+        const nuevasAlternativas = alternativas.map((alt, index) => ({
+          ...alt,
+          seleccionada: index === indexSeleccionado, 
+        }));
         setAlternativas(nuevasAlternativas);
       };
+      
 
       const funcionchance = (event)=>{
         setQuiz({ ...quiz, [event.target.name]: event.target.value });
@@ -535,7 +538,7 @@ const Publicacion = () => {
                                                             <div key={index} className='itemalternativa'>
                                                     <TextField
                                                             label={`Alternativa ${index + 1}`}
-                                                            value={alternativas[index].texto}
+                                                            value={alt.texto}
                                                             onChange={(event) => actualizaralternativa(index, event)}
                                                             variant="filled"
                                                             className='itemalt'
@@ -554,7 +557,6 @@ const Publicacion = () => {
                                                     
                                                 ))}
                                             </div>
-                                   
                                         </div>
                                     
                                     </div>

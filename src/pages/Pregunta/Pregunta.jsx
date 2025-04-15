@@ -18,13 +18,37 @@ const Pregunta =()=>{
     const [puntaje,setPuntaje] = useState(0);
     const [open, setOpen] = React.useState(false);
 
-    const manejarSeleccion = (idPregunta,alt) => {console.log("idsss",idPregunta,"oño",alt)
-      setSeleccionado((prev) => ({
-        ...prev,
-        [idPregunta]: alt.id
-      })); 
-      setResultado((prevResultado) => prevResultado + (alt.seleccionada ? 1 : 0)); console.log("resultado",resultado)
+    const manejarSeleccion = (idPregunta, alt) => {
+      setSeleccionado(prev => {
+        const anteriorIdAlt = prev[idPregunta];
+    
+        // Revisar si ya se había seleccionado esta pregunta
+        let nuevoResultado = resultado;
+    
+        // Si había una alternativa anterior
+        if (anteriorIdAlt !== undefined) {
+          // Buscar si la anterior era correcta
+          const altAnterior = alternativa[idPregunta].find(a => a.id === anteriorIdAlt);
+          if (altAnterior?.seleccionada) {
+            nuevoResultado -= 1;
+          }
+        }
+    
+        // Ahora, si la nueva es correcta, la sumamos
+        if (alt.seleccionada) {
+          nuevoResultado += 1;
+        }
+    
+        setResultado(nuevoResultado);
+    
+        return {
+          ...prev,
+          [idPregunta]: alt.id
+        };
+      });
     };
+    
+    
       
     const handleClickOpen = () => {
       setOpen(true);
@@ -188,7 +212,7 @@ const Pregunta =()=>{
                                               <p key={alt.id}>
                                                 <Checkbox
                                                   {...label}
-                                                  checked={seleccionado[p.id]=== alt.id}
+                                                  checked={seleccionado[p.id] === alt.id}
 
                                                   onChange={() => manejarSeleccion(p.id, alt)}
                                                 />
