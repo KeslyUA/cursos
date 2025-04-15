@@ -13,14 +13,17 @@ const Pregunta =()=>{
     const iduser =Number(idUsuario);console.log("uu",iduser)
     const [evaluacionClick, setEvaluacionClick] = useState(null);
     const [alternativa, setAlternativas] = useState({});
-    const [seleccionado, setSeleccionado] = useState(null);
+    const [seleccionado, setSeleccionado] = useState({});
     const [resultado,setResultado] = useState(0);
     const [puntaje,setPuntaje] = useState(0);
     const [open, setOpen] = React.useState(false);
 
-    const manejarSeleccion = (alt) => {
-      setSeleccionado(alt.id); 
-      setResultado(alt.seleccionada ? 1 : 0); 
+    const manejarSeleccion = (idPregunta,alt) => {console.log("idsss",idPregunta,"oño",alt)
+      setSeleccionado((prev) => ({
+        ...prev,
+        [idPregunta]: alt.id
+      })); 
+      setResultado((prevResultado) => prevResultado + (alt.seleccionada ? 1 : 0)); console.log("resultado",resultado)
     };
       
     const handleClickOpen = () => {
@@ -46,9 +49,9 @@ const Pregunta =()=>{
   
           // Cargar alternativas para cada pregunta
           
-          const idEvaluacion=preguntasFiltradas.filter(p=>p.id);console.log("peppe",idEvaluacion)
-          
-       
+          const idEvaluacion=preguntasFiltradas.map((p)=>p.id);console.log("peppe",idEvaluacion)
+         
+
             const resAlt = await fetch(`http://localhost:3001/alternativas`, {
               method:"GET",
               headers: {
@@ -57,20 +60,21 @@ const Pregunta =()=>{
               },
             });
               
-            const dataAlt = await resAlt.json();
-          
-            const filtroAlt = dataAlt.filter((alt) =>
+            const dataAlt = await resAlt.json();console.log("yy",dataAlt)
+            const alternativasFiltradas = dataAlt.filter((alt) =>
               idEvaluacion.includes(alt.idPreguntas)
-            );console.log("filtrazo de alternativa x inpregunta",filtroAlt)
-            const alternativasPorId = {};
-            for (const alt of filtroAlt) {
-              if (!alternativasPorId[alt.idPreguntas]) {
-                alternativasPorId[alt.idPreguntas] = [];
-              }
-              alternativasPorId[alt.idPreguntas].push(alt);
-            }
+            );
 
-            setAlternativas(alternativasPorId);console.log("alternativaspor",alternativasPorId)
+            const alternativasAgrupadas = {};
+            alternativasFiltradas.forEach((alt) => {
+              if (!alternativasAgrupadas[alt.idPreguntas]) {
+                alternativasAgrupadas[alt.idPreguntas] = [];
+              }
+              alternativasAgrupadas[alt.idPreguntas].push(alt);
+            });
+            
+            setAlternativas(alternativasAgrupadas);  console.log("esto se ve",alternativasAgrupadas)
+            
         } catch (error) {
           console.error("Error cargando preguntas:", error);
         }
@@ -78,6 +82,9 @@ const Pregunta =()=>{
   
       cargarPreguntas();
     }, [idCursos]);
+
+    
+ 
 
       //puntajes
 
@@ -177,15 +184,15 @@ const Pregunta =()=>{
                                             <h3>{p.titulo}</h3>
 
                                             <div className='sub-alt'>
-                                            {alternativa[p.id] && alternativa[p.id].map((alt) => (
-                                                <p key={alt.id}>
+                                            {alternativa[p.id]?.map((alt) => (
+                                              <p key={alt.id}>
                                                 <Checkbox
                                                   {...label}
-                                                  checked={seleccionado === alt.id}
-                                                  onChange={() => manejarSeleccion(alt)}
+                                                  checked={seleccionado[p.id]=== alt.id}
+                                                  onChange={() => manejarSeleccion(p.id, alt)}
                                                 />
-                                                    {alt.texto}
-                                                </p>
+                                                {alt.texto}
+                                              </p>
                                             ))}
 
                                             </div>
