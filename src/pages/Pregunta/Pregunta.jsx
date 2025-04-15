@@ -141,7 +141,7 @@ const Pregunta =()=>{
       try {
         const token = localStorage.getItem("token");
     const idUsuario = iduser;
-    const idCurso = id
+    const idCurso = idCursos;
     
     
         const respuesta = await fetch(`http://localhost:3001/puntaje/${idUsuario}/${idCurso}`, {
@@ -189,13 +189,14 @@ const Pregunta =()=>{
                                                 <Checkbox
                                                   {...label}
                                                   checked={seleccionado[p.id]=== alt.id}
+
                                                   onChange={() => manejarSeleccion(p.id, alt)}
                                                 />
                                                 {alt.texto}
                                               </p>
                                             ))}
 
-                                            </div>
+                                            </div>{resultado}
                                             <br />
                                           </div>
                                         ))}
