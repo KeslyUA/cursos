@@ -17,8 +17,11 @@ import AgregarParticipantes from '../dialogo/agregarParticipantes/AgregarPartici
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import CircularProgress from '@mui/material/CircularProgress';
 import Cuestionario from '../dialogo/cuestionario/Cuestionario';
+import FolderIcon from '@mui/icons-material/Folder';
+import Avatar from '@mui/material/Avatar';
 import Radio from '@mui/material/Radio';
-import agregarSeleccionados from '../dialogo/agregarParticipantes/AgregarParticipates'
+import agregarSeleccionados from '../dialogo/agregarParticipantes/AgregarParticipates';
+import guardarEvaluacion from'../dialogo/cuestionario/Cuestionario'
 
 const Publicacion = () => {
     const [videoSrc, setVideoSrc] = useState(null);
@@ -63,10 +66,10 @@ const Publicacion = () => {
             setVideoURL:curso.videoURL
         });
     };
-    const [quiz,setQuiz] = useState ({
-        titulo:"",
-        alternativa:[],
-    });
+    
+    const [quiz, setQuiz] = useState([
+        { titulo: '', alternativas: ['', '', '', ''] }
+      ]);
     const abrirDialogoParticipantes = () => {
         setabrirDialogo(true); 
       };
@@ -149,7 +152,7 @@ const Publicacion = () => {
 
             if(data.id){
                 await guardarParticipantes(data.id);
-                setIdCursocreado(data.id)
+                
                 await guardarEvaluacion(data.id);
             }
             
@@ -266,7 +269,7 @@ const Publicacion = () => {
     //guardar evaluacion
     const guardarEvaluacion = async (idCurso) => {
         try {
-            for (const evaluacion of evaluacionesPorGuardar) {
+            
             const response = await fetch("http://localhost:3001/evaluaciones", {
                 method: "POST",
                 headers: {
@@ -274,33 +277,25 @@ const Publicacion = () => {
                     Authorization: `Bearer ${localStorage.getItem("token")}` 
                 },
                 body: JSON.stringify({
-                    titulo: evaluacion.titulo,
-                    idCurso: idCurso,
-                    alternativas: evaluacion.alternativas
+                    titulo: quiz.titulo,
+                    idCurso,
+                    alternativas: alternativas
                 })
             });
             const data = await response.json();
             
             
             if (response.ok) {
-                console.log("Pregunta guardada:", data);
-
+                setEvaluaciones(preEvaluaciones=>[...preEvaluaciones,data]);
+                
+                setQuiz({ titulo: "" }); 
+                setAlternativas([]);
             }
-        }
-        setEvaluacionesPorGuardar([]);
+        
 
         } catch (error) {
             console.error("Error al guardar evaluación:", error);
         }
-    };
-
-    const agregarEvaluacion = () => {
-        setEvaluacionesPorGuardar(prev => [
-            ...prev,
-            { titulo: quiz.titulo, alternativas: alternativas }
-        ]);
-        setQuiz({ titulo: "" });console.log("prev",evaluacionesPorGuardar)
-        setAlternativas([]);
     };
     
         
@@ -512,11 +507,15 @@ const Publicacion = () => {
                         <p className='text-pregunta' style={{color:'white',fontSize:'20px'}}>Mis Publicaciones activas</p>
 
                         <div className='div-publicacion'>
+                        
                           {misCursos.map((curso) => {
                             
                                 return (    
                                 <li className='publicaciones-activa' key={curso.id}  onClick={()=>selectorCurso(curso)} style={{ cursor: "pointer" }}>
-                                    <ul>{curso.titulo}</ul>
+                                    <Avatar>
+                                    <FolderIcon />
+                                  </Avatar>
+                                  <ul>{curso.titulo}</ul>
                                 </li>
                                 );
                          })}  
@@ -535,7 +534,7 @@ const Publicacion = () => {
 
                             <p className='text-pregunta'>Evaluacion</p>
                             <div className='btn-espacio'>
-                                <Button variant="contained" size="medium" onClick={() => guardarEvaluacion(idCursocreado)} >
+                                <Button variant="contained" size="medium" onClick={() => guardarEvaluacion(data.id)} >
                                          Agregar
                             </Button>
                             </div>
@@ -617,7 +616,7 @@ const Publicacion = () => {
                     
                 </div>
                 <AgregarParticipantes open={abrirDialogo} onClose={cerrarDialogo} onSeleccionarParticipantes={setParticipantesSeleccionados} />
-                <Cuestionario open={abrirDialogoPre} onClose={cerrarDialogoPreguntas}/>
+                <Cuestionario open={abrirDialogoPre} onClose={cerrarDialogoPreguntas} titulo={formData.titulo} funcionchance={funcionchance}  guardarEvaluacion={() => guardarEvaluacion(data.id)} />
         </div>
     )}
 export default Publicacion 

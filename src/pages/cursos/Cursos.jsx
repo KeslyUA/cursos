@@ -312,19 +312,7 @@ const Cursos = ({ curso }) => {
                 </div>
             
             </div>
-            <div className='segundario'>
-                <p className='titulo-cer'>Mis Publicaciones</p>
-                <div className='panel-publicaciones'>
-                {misCursos.map((curso) => {
-                            
-                            return (    
-                            <li className='lista' key={curso.id} >
-                                <ul>{curso.titulo}</ul>
-                            </li>
-                            );
-                     })}  
-                </div>
-            </div>
+            
             <p className='titulo-c'>Cursos Disponibles</p>
             <div className='tercero'>
                 <div className='disponibles' >
