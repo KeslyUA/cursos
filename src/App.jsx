@@ -4,6 +4,7 @@ import Principal from'./pages/principal/Principal'
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import React from 'react';
+import "@fortawesome/fontawesome-free/css/all.min.css";
 
 
 
